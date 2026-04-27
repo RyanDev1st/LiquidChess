@@ -1,0 +1,42 @@
+# LiquidChess Dependencies
+# Python 3.12+ required
+
+# Core Chess Libraries
+python-chess>=1.10.0      # Core board logic, engine wrapper
+chess-tcn>=1.0.0          # TCN decoder for Chess.com move format
+
+# AI/LLM Integration
+groq>=0.5.0               # Groq API client for Llama models
+
+# Image Rendering
+cairosvg>=2.7.0           # SVG to PNG conversion for vision
+
+# HTTP/Networking
+requests>=2.31.0          # HTTP client (backup)
+aiohttp>=3.9.0            # Async HTTP with connection pooling
+
+# Data Storage
+redis>=5.0.0              # For tournament mode queue management
+
+# Configuration
+pyyaml>=6.0               # YAML config file parsing
+python-dotenv>=1.0.0      # Environment variable loading
+pydantic>=2.0             # Data validation and models
+
+# Discord Bot
+discord.py>=2.3.0         # Discord API wrapper
+
+# Google Drive Integration (for meme distribution)
+google-api-python-client>=2.100.0   # Google APIs
+google-auth>=2.23.0                  # Google authentication
+
+# Observability - OpenTelemetry Tracing
+opentelemetry-api>=1.20.0                      # Core OTEL API
+opentelemetry-sdk>=1.20.0                      # OTEL SDK
+opentelemetry-exporter-otlp>=1.20.0            # OTLP exporter for AI Toolkit
+opentelemetry-instrumentation-aiohttp-client   # Auto-instrument aiohttp
+opentelemetry-instrumentation-requests         # Auto-instrument requests
+
+# Development (optional)
+pytest>=7.0.0             # Testing framework
+pytest-asyncio>=0.21.0    # Async test support

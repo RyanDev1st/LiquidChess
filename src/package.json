@@ -1,0 +1,25 @@
+{
+  "name": "liquidchess",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "npm --prefix app/frontend run dev --",
+    "dev:frontend": "npm --prefix app/frontend run dev --",
+    "dev:observer": "..\\.venv\\Scripts\\python.exe main.py",
+    "observe": "..\\.venv\\Scripts\\python.exe main.py",
+    "bot": "..\\.venv\\Scripts\\python.exe app\\backend\\run_bot.py",
+    "dev:bot": "..\\.venv\\Scripts\\python.exe app\\backend\\run_bot.py",
+    "test": "..\\.venv\\Scripts\\python.exe -m pytest -c app\\backend\\pytest.ini app\\backend\\tests",
+    "bench": "..\\.venv\\Scripts\\python.exe app\\backend\\run_benchmarks.py",
+    "web": "npm --prefix app/frontend run dev --",
+    "build:web": "npm --prefix app/frontend run build",
+    "register:commands": "..\\.venv\\Scripts\\python.exe app\\backend\\functions\\register_commands.py register",
+    "list:commands": "..\\.venv\\Scripts\\python.exe app\\backend\\functions\\register_commands.py list",
+    "legacy:firebase:emulate": "firebase emulators:start",
+    "legacy:firebase:deploy": "firebase deploy",
+    "legacy:firebase:deploy:functions": "firebase deploy --only functions",
+    "legacy:firebase:deploy:hosting": "firebase deploy --only hosting"
+  },
+  "dependencies": {
+    "gh": "^2.8.9"
+  }
+}

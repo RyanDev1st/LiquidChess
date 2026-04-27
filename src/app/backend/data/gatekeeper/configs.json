@@ -1,0 +1,14 @@
+{
+  "974286608159359046": {
+    "guild_id": 974286608159359046,
+    "enabled": true,
+    "welcome_channel_id": null,
+    "auto_role_id": null,
+    "rules_channel_id": null,
+    "welcome_message": "\ud83e\udddb *A new soul enters the castle...*\n\nWelcome, {user}! You have entered **{server}**.\n\n{rules_mention}\n\nMay your games be sharp and your strategies sharper.\n",
+    "send_dm": false,
+    "dm_message": null,
+    "created_at": "2026-02-13T20:38:32.503264",
+    "updated_at": "2026-02-13T20:38:32.503267"
+  }
+}

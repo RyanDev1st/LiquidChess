@@ -1,0 +1,59 @@
+# LiquidChess Configuration
+# API Keys and URLs for the Vampire Bot
+
+# Chess.com Polling Configuration
+chess_com:
+  base_url: "https://www.chess.com/callback/live/game"
+  user_agent: "LiquidChess-Bot/1.0"
+  poll_interval_my_turn: 0.5
+  poll_interval_opponent_turn: 2.0
+  request_timeout: 10.0
+
+# Stockfish Engine Configuration
+stockfish:
+  # Path to Stockfish executable (auto-detect if null)
+  path: null
+  # Strict time limit in seconds (100ms)
+  time_limit: 0.1
+  # Maximum depth (optional, time limit takes precedence)
+  max_depth: 20
+
+# Groq API Configuration
+groq:
+  # API key (load from environment GROQ_API_KEY if null)
+  api_key: null
+  # Text generation model (Llama 3 70B)
+  text_model: "llama-3.3-70b-versatile"
+  # Vision model (Llama 3.2 11B)
+  vision_model: "llama-3.2-11b-vision-preview"
+  # Max tokens for commentary
+  max_tokens: 50
+  # Temperature for creativity
+  temperature: 0.9
+
+# Vision Configuration
+vision:
+  # Enable vision analysis (expensive, disabled by default)
+  enabled: false
+  # Trigger vision every N moves
+  trigger_interval: 5
+  # Board render size in pixels
+  render_size: 512
+
+# Persona Configuration
+persona:
+  name: "Count Lucian"
+  max_output_words: 20
+
+# Logging Configuration
+logging:
+  level: "INFO"
+  file: null  # Optional log file path
+  format: "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s"
+
+# Redis Configuration (for Tournament Mode)
+redis:
+  enabled: false
+  host: "localhost"
+  port: 6379
+  db: 0

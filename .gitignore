@@ -1,0 +1,60 @@
+# === Sensitive / Secret / Large files (DO NOT commit) ===
+.env
+.env.*
+LightRAG/
+rag_storage/
+test-results/
+
+# Firebase (only keep if you want public config; remove lines below if you prefer to commit them)
+# firebase.json
+# firebaserc
+
+# Standard ignores
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Misc
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
+
+
+# === Sensitive / Secret / Large files (DO NOT commit) ===
+.env
+.env.*
+LightRAG/
+rag_storage/
+test-results/
+
+# Firebase (only keep if you want public config; remove lines below if you prefer to commit them)
+# firebase.json
+# firebaserc
+
+# Standard ignores
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Misc
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
