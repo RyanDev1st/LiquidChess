@@ -2,7 +2,7 @@
 
 import { Suspense, useRef, useEffect, useState, useMemo } from "react";
 import { Canvas, useFrame, useLoader } from "@react-three/fiber";
-import { useFBX, Environment, ContactShadows } from "@react-three/drei";
+import { useFBX, Environment, ContactShadows, Float } from "@react-three/drei";
 import * as THREE from "three";
 
 interface VideoFrameData {
@@ -33,7 +33,6 @@ function ChessScene() {
   useEffect(() => {
     if (!groupRef.current || !fbxSource) return;
 
-    // Clean up previous meshes
     while (groupRef.current.children.length > 0) {
       const child = groupRef.current.children[0];
       if (child instanceof THREE.Mesh) {
@@ -47,28 +46,24 @@ function ChessScene() {
       groupRef.current.remove(child);
     }
 
-    // Texture setup
     colorTex.colorSpace = THREE.SRGBColorSpace;
     colorTex.flipY = false;
     normalTex.flipY = false;
 
     const clone = fbxSource.clone(true);
 
-    // Scale to consistent size
     const rawBox = new THREE.Box3().setFromObject(clone);
     const rawSize = new THREE.Vector3();
     rawBox.getSize(rawSize);
     const maxDim = Math.max(rawSize.x, rawSize.y, rawSize.z);
-    const scaleFactor = 4.5 / maxDim;
+    const scaleFactor = 3.8 / maxDim;
     clone.scale.setScalar(scaleFactor);
 
-    // Center and tilt
     const scaledBox = new THREE.Box3().setFromObject(clone);
     const scaledCenter = scaledBox.getCenter(new THREE.Vector3());
-    clone.position.set(-scaledCenter.x, -scaledCenter.y - 0.2, -scaledCenter.z);
-    clone.rotation.x = -0.15;
+    clone.position.set(-scaledCenter.x, -scaledCenter.y, -scaledCenter.z);
+    clone.rotation.x = 0;
 
-    // Separate King and Queen
     let kingBounds = { min: 0, max: 0 };
     let queenBounds = { min: 0, max: 0 };
     let kingFound = false;
@@ -76,14 +71,10 @@ function ChessScene() {
 
     clone.traverse((obj) => {
       if (!(obj instanceof THREE.Mesh)) return;
-
       const b = new THREE.Box3().setFromBufferAttribute(
         obj.geometry.attributes.position as THREE.BufferAttribute
       );
-
-      // Identify King (typically lower vertices) vs Queen (higher vertices)
       const centerY = (b.min.y + b.max.y) / 2;
-
       if (!kingFound || !queenFound) {
         if (centerY < 0 && !kingFound) {
           kingBounds = { min: b.min.x, max: b.max.x };
@@ -95,42 +86,36 @@ function ChessScene() {
       }
     });
 
-    // If bounds not found, fall back to Y-based split
     let useYSplit = false;
     if (!kingFound || !queenFound) {
       useYSplit = true;
     }
 
-    // Build separate meshes
     const kingGroup = new THREE.Group();
     const queenGroup = new THREE.Group();
 
     clone.traverse((obj) => {
       if (!(obj instanceof THREE.Mesh)) return;
-
       const geo = obj.geometry;
       const pos = geo.attributes.position;
 
-      // Determine piece type
       let isKing = false;
       if (useYSplit) {
         const b = new THREE.Box3().setFromBufferAttribute(pos as THREE.BufferAttribute);
         const centerY = (b.min.y + b.max.y) / 2;
         isKing = centerY < 0;
       } else {
-        // Check if mesh belongs to king bounds
         const b = new THREE.Box3().setFromBufferAttribute(pos as THREE.BufferAttribute);
         isKing = (b.min.x + b.max.x) / 2 < (kingBounds.max + queenBounds.min) / 2;
       }
 
-      // Create new material with premium quality
       const material = new THREE.MeshStandardMaterial({
         map: colorTex,
         normalMap: normalTex,
-        normalScale: new THREE.Vector2(1.2, 1.2),
-        roughness: isKing ? 0.35 : 0.25,
-        metalness: isKing ? 0.85 : 0.9,
-        envMapIntensity: 1.2,
+        normalScale: new THREE.Vector2(1.0, 1.0),
+        roughness: isKing ? 0.3 : 0.25,
+        metalness: isKing ? 0.9 : 0.95,
+        envMapIntensity: 1.0,
         vertexColors: false,
       });
 
@@ -145,11 +130,9 @@ function ChessScene() {
       }
     });
 
-    // Position King (left) and Queen (right)
-    kingGroup.position.set(-1.2, 0, 0);
-    queenGroup.position.set(1.2, 0, 0);
+    kingGroup.position.set(-1.5, 0, 0);
+    queenGroup.position.set(1.5, 0, 0);
 
-    // Store refs for animation
     if (kingGroup.children[0]) {
       const mesh = kingGroup.children[0] as THREE.Mesh;
       kingRef.current = mesh;
@@ -167,43 +150,66 @@ function ChessScene() {
   useFrame((_, delta) => {
     if (!groupRef.current) return;
     timeRef.current += delta;
-
     const t = timeRef.current;
 
-    // Gentle floating motion
-    groupRef.current.position.y = Math.sin(t * 0.5) * 0.08;
+    groupRef.current.position.y = Math.sin(t * 0.4) * 0.05;
+    groupRef.current.rotation.y = Math.sin(t * 0.25) * 0.03;
 
-    // Subtle rotation
-    groupRef.current.rotation.y = Math.sin(t * 0.3) * 0.06;
-
-    // Micro-bobbing for individual pieces
     if (kingRef.current) {
-      kingRef.current.position.y = Math.sin(t * 0.7 + 0.5) * 0.03;
-      kingRef.current.rotation.y = Math.sin(t * 0.4) * 0.02;
+      kingRef.current.position.y = Math.sin(t * 0.5 + 0.3) * 0.02;
+      kingRef.current.rotation.y = Math.sin(t * 0.3) * 0.015;
     }
     if (queenRef.current) {
-      queenRef.current.position.y = Math.sin(t * 0.6 + 1.0) * 0.025;
-      queenRef.current.rotation.y = Math.sin(t * 0.35 + 1.2) * 0.018;
+      queenRef.current.position.y = Math.sin(t * 0.45 + 0.8) * 0.018;
+      queenRef.current.rotation.y = Math.sin(t * 0.28 + 1.0) * 0.012;
     }
   });
 
   return <group ref={groupRef} />;
 }
 
-function SceneContent() {
+function Platform() {
   return (
-    <>
-      {/* Atmospheric fog for depth */}
-      <fog attach="fog" args={["#0a0a0a", 8, 25]} />
+    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.9, 0]} receiveShadow>
+      <cylinderGeometry args={[2.5, 2.8, 0.15, 32]} />
+      <meshStandardMaterial
+        color="#1a1a1a"
+        metalness={0.9}
+        roughness={0.1}
+        envMapIntensity={1.0}
+      />
+    </mesh>
+  );
+}
 
-      {/* Ambient lighting */}
-      <ambientLight intensity={0.4} color="#e8e0d0" />
+function SceneContent({ scrollProgress }: { scrollProgress: number }) {
+  const groupRef = useRef<THREE.Group>(null);
 
-      {/* Key light - main illumination */}
+  useFrame(() => {
+    if (!groupRef.current) return;
+    const separation = scrollProgress * 3.0;
+    const scaleQueen = 1.0 + scrollProgress * 0.15;
+    const depthOffset = scrollProgress * -0.5;
+
+    if (groupRef.current.children[0]) {
+      (groupRef.current.children[0] as THREE.Group).position.x = -separation;
+    }
+    if (groupRef.current.children[1]) {
+      const queenGroup = groupRef.current.children[1] as THREE.Group;
+      queenGroup.position.x = separation;
+      queenGroup.position.z = depthOffset;
+      queenGroup.scale.setScalar(scaleQueen);
+    }
+  });
+
+  return (
+    <group ref={groupRef}>
+      <ambientLight intensity={0.3} color="#e8e0d0" />
+
       <directionalLight
-        position={[3, 6, 5]}
-        intensity={1.4}
-        color="#fff5e6"
+        position={[5, 8, 5]}
+        intensity={1.5}
+        color="#ffffff"
         castShadow
         shadow-mapSize={[2048, 2048]}
         shadow-camera-far={30}
@@ -211,55 +217,42 @@ function SceneContent() {
         shadow-camera-right={10}
         shadow-camera-top={10}
         shadow-camera-bottom={-10}
-        shadow-bias={-0.0001}
       />
 
-      {/* Rim light - gold accent from back-right */}
       <spotLight
-        position={[4, 3, -3]}
-        angle={0.6}
-        penumbra={0.8}
-        intensity={1.8}
+        position={[0, -2, -4]}
+        angle={0.8}
+        penumbra={0.9}
+        intensity={2.0}
         color="#c9a84c"
         castShadow
       />
 
-      {/* Fill light - soft blue from left */}
       <pointLight
-        position={[-4, 2, 3]}
-        intensity={0.5}
+        position={[-4, 3, 2]}
+        intensity={0.6}
         color="#a8c8e8"
       />
 
-      {/* Gold accent light - front bottom */}
       <pointLight
-        position={[0, -1, 4]}
-        intensity={0.8}
+        position={[4, 2, 3]}
+        intensity={0.7}
         color="#e4c87a"
-      />
-
-      {/* Subtle overhead spotlight on pieces */}
-      <spotLight
-        position={[0, 8, 2]}
-        angle={0.4}
-        penumbra={0.6}
-        intensity={0.6}
-        color="#fff8f0"
       />
 
       <Environment preset="city" background={false} />
 
-      {/* Soft contact shadows for grounding */}
       <ContactShadows
-        position={[0, -1.85, 0]}
-        opacity={0.6}
-        scale={8}
-        blur={2.5}
-        far={4}
+        position={[0, -1.98, 0]}
+        opacity={0.8}
+        scale={4}
+        blur={2}
+        far={3}
       />
 
+      <Platform />
       <ChessScene />
-    </>
+    </group>
   );
 }
 
@@ -272,17 +265,17 @@ function StreamVideoFrame({ frame }: { frame: VideoFrameData }) {
   useEffect(() => {
     let raf: number;
     let z = frame.startZ;
-    const speed = 0.45;
+    const speed = 0.35;
 
     const animate = () => {
       if (!paused) {
         z += speed;
-        if (z > 200) z = frame.startZ;
-        const opacity = Math.min(1, Math.max(0, (z + 120) / 80));
-        const scale = Math.min(1.1, 0.55 + (z + 120) / 280);
+        if (z > 120) z = frame.startZ;
+        const opacity = Math.min(1, Math.max(0, (z + 80) / 60));
+        const scale = Math.min(1.15, 0.5 + (z + 80) / 240);
         if (ref.current) {
           ref.current.style.transform = `translateX(-50%) translateZ(${z}px) rotateY(${frame.rotation}deg) scale(${scale})`;
-          ref.current.style.opacity = String(opacity * 0.8);
+          ref.current.style.opacity = String(opacity * 0.6);
         }
       }
       raf = requestAnimationFrame(animate);
@@ -314,7 +307,7 @@ function StreamVideoFrame({ frame }: { frame: VideoFrameData }) {
   return (
     <div
       ref={ref}
-      className="absolute left-1/2 top-1/2 w-40 cursor-pointer"
+      className="absolute left-1/2 top-1/2 w-36 cursor-pointer"
       style={{
         transform: `translateX(-50%) translateZ(${frame.startZ}px)`,
         marginTop: `${frame.x}px`,
@@ -325,7 +318,7 @@ function StreamVideoFrame({ frame }: { frame: VideoFrameData }) {
     >
       <div
         className={`relative rounded-xl overflow-hidden border transition-all duration-300 ${
-          hovered ? "border-[--gold]/60 shadow-[0_0_30px_rgba(201,168,76,0.3)]" : "border-white/10"
+          hovered ? "border-[--gold]/60 shadow-[0_0_25px_rgba(201,168,76,0.25)]" : "border-white/8"
         }`}
       >
         <video
@@ -338,9 +331,9 @@ function StreamVideoFrame({ frame }: { frame: VideoFrameData }) {
           preload="metadata"
         />
         {!hovered && (
-          <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-            <div className="w-6 h-6 rounded-full border border-white/40 flex items-center justify-center">
-              <div className="w-0 h-0 border-t-[4px] border-t-transparent border-b-[4px] border-b-transparent border-l-[7px] border-l-white/60 ml-0.5" />
+          <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+            <div className="w-7 h-7 rounded-full border border-white/30 flex items-center justify-center">
+              <div className="w-0 h-0 border-t-[5px] border-t-transparent border-b-[5px] border-b-transparent border-l-[8px] border-l-white/50 ml-0.5" />
             </div>
           </div>
         )}
@@ -352,35 +345,56 @@ function StreamVideoFrame({ frame }: { frame: VideoFrameData }) {
 export function HeroSection({ containerRef }: { containerRef: React.RefObject<HTMLElement> }) {
   const frames = useMemo(() => generateFrames(), []);
   const [mounted, setMounted] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
 
   useEffect(() => {
     setMounted(true);
   }, []);
-  if (!mounted) return null;
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const handleScroll = () => {
+      const el = containerRef.current;
+      if (!el) return;
+      const scrollTop = el.scrollTop;
+      const heroHeight = window.innerHeight;
+      const progress = Math.min(1, Math.max(0, scrollTop / heroHeight));
+      setScrollProgress(progress);
+    };
+
+    const el = containerRef.current;
+    el.addEventListener("scroll", handleScroll, { passive: true });
+    return () => el.removeEventListener("scroll", handleScroll);
+  }, [containerRef]);
 
   void containerRef;
 
+  if (!mounted) return null;
+
   return (
     <div id="hero" className="snap-section flex flex-col items-center justify-center relative overflow-hidden">
-      {/* Subtle background gradient */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(201,168,76,0.03)_0%,transparent_60%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(201,168,76,0.05)_0%,transparent_60%)]" />
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-black/20" />
 
-      {/* Video frames - very subtle background layer */}
       <div
-        className="absolute inset-0 overflow-hidden opacity-30"
-        style={{ perspective: "1000px", perspectiveOrigin: "50% 50%" }}
+        className="absolute inset-0 overflow-hidden"
+        style={{ perspective: "1200px", perspectiveOrigin: "50% 50%" }}
       >
         {frames.map((frame) => (
           <StreamVideoFrame key={frame.id} frame={frame} />
         ))}
       </div>
 
-      {/* 3D Chess models - center stage */}
-      <div className="absolute inset-0 flex items-center justify-center">
+      <div className="absolute inset-0 flex items-center justify-center" style={{ perspective: "1500px" }}>
         <Suspense fallback={null}>
           <Canvas
-            camera={{ position: [0, 1.2, 10], fov: 35 }}
+            camera={{
+              position: [0, 1.0, 7],
+              fov: 42,
+              near: 0.1,
+              far: 100
+            }}
             gl={{
               antialias: true,
               alpha: true,
@@ -392,12 +406,11 @@ export function HeroSection({ containerRef }: { containerRef: React.RefObject<HT
             dpr={[1, 1.5]}
             shadows
           >
-            <SceneContent />
+            <SceneContent scrollProgress={scrollProgress} />
           </Canvas>
         </Suspense>
       </div>
 
-      {/* Hero text */}
       <div className="relative z-20 text-center px-6 pointer-events-none">
         <div className="mb-4">
           <p className="text-[10px] md:text-xs font-mono uppercase tracking-[0.5em] text-[--gold]/60 mb-3">
@@ -412,13 +425,13 @@ export function HeroSection({ containerRef }: { containerRef: React.RefObject<HT
               background: "linear-gradient(135deg,#c9a84c,#e4c87a)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
-              filter: "drop-shadow(0 0 20px rgba(201,168,76,0.3))",
+              filter: "drop-shadow(0 0 20px rgba(201,168,76,0.4))",
             }}
           >
             Speaks
           </span>
         </h1>
-        <p className="text-white/35 text-base md:text-lg font-light max-w-md mx-auto leading-relaxed">
+        <p className="text-white/40 text-base md:text-lg font-light max-w-md mx-auto leading-relaxed">
           Real-time AI commentary that transforms every move into a moment.
         </p>
       </div>
