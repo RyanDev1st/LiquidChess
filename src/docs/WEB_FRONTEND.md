@@ -35,6 +35,23 @@ Place required static assets in the `public/` folder:
 
 When assets are missing, fallback content renders (e.g., solid colors, no audio).
 
+## Snap Scrolling
+
+`index.css` uses `scroll-snap-type: y proximity` (not `mandatory`) with no `scroll-snap-stop: always`. This allows natural scrolling without the browser aggressively fighting back to the current section.
+
+## Sections
+
+| Section | File | Notes |
+|---|---|---|
+| Hook | `HookSection.tsx` | EtheralShadow gold animation (21stdev), typewriter; overlay reduced to /20 opacity |
+| Hero | `HeroSection.tsx` | R3F Canvas; single FBX split by connected components into King+Queen; camera [0,3,9] fov 40; scene tilt -0.18X |
+| Voice Showcase | `VoiceShowcaseSection.tsx` | Voice card marquee |
+| Demo | `DemoSection.tsx` | Video comparison + live chat + SplineKeyboard toggle; plain snap-section (ContainerScroll removed) |
+| Testimonials | `TestimonialSection.tsx` | 90vw, 65vh; hover gold glow; click → portal 3D card flip (profile + usage stats) |
+| CTA | `CTASection.tsx` | 3D models + screen + Get Started button |
+| FAQ | `FAQSection.tsx` | Accordion |
+| Footer | `FooterSection.tsx` | FlickeringGrid banner + CodePen-style horizontal rows (bold label \| links) |
+
 ## Notes
 
-The landing page uses viewport snap sections, glassmorphism surfaces, black/gold/white brand tokens, and the referenced 21st.dev components adapted to Vite.
+The landing page uses viewport snap sections (`scroll-snap-type: y proximity`), glassmorphism surfaces, black/gold/white brand tokens, and the referenced 21st.dev components adapted to Vite.
