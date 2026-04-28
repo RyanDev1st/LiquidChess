@@ -2,9 +2,8 @@
 
 import { Suspense, useRef, useEffect, useState, useMemo } from "react";
 import { Canvas, useFrame, useLoader } from "@react-three/fiber";
-import { useFBX, Environment } from "@react-three/drei";
+import { useFBX, Environment, ContactShadows } from "@react-three/drei";
 import * as THREE from "three";
-import { useScroll } from "framer-motion";
 
 interface VideoFrameData {
   id: number;
@@ -14,278 +13,252 @@ interface VideoFrameData {
 }
 
 const generateFrames = (): VideoFrameData[] =>
-  Array.from({ length: 8 }, (_, i) => ({
+  Array.from({ length: 4 }, (_, i) => ({
     id: i,
-    x: (i % 4 - 1.5) * 22,
-    startZ: -120 - i * 30,
-    rotation: (Math.random() - 0.5) * 12,
+    x: (i % 2 - 0.5) * 30,
+    startZ: -100 - i * 40,
+    rotation: (Math.random() - 0.5) * 8,
   }));
 
-function splitByConnectedComponents(geometry: THREE.BufferGeometry): THREE.BufferGeometry[] {
-  const index = geometry.index;
-  if (!index) return [geometry];
-
-  const vertCount = geometry.attributes.position.count;
-  const indices = index.array as Uint16Array | Uint32Array;
-
-  const parent = new Int32Array(vertCount);
-  for (let i = 0; i < vertCount; i++) parent[i] = i;
-
-  function find(x: number): number {
-    while (parent[x] !== x) { parent[x] = parent[parent[x]]; x = parent[x]; }
-    return x;
-  }
-  function union(a: number, b: number) { parent[find(a)] = find(b); }
-
-  for (let i = 0; i < indices.length; i += 3) {
-    union(indices[i], indices[i + 1]);
-    union(indices[i + 1], indices[i + 2]);
-  }
-
-  const components = new Map<number, number[]>();
-  for (let i = 0; i < indices.length; i += 3) {
-    const root = find(indices[i]);
-    let arr = components.get(root);
-    if (!arr) { arr = []; components.set(root, arr); }
-    arr.push(i);
-  }
-
-  if (components.size < 2) return [geometry];
-
-  const pos = geometry.attributes.position;
-  const nor = geometry.attributes.normal;
-  const uv = geometry.attributes.uv;
-
-  return [...components.values()].map((triStarts) => {
-    const vertexMap = new Map<number, number>();
-    const newPos: number[] = [];
-    const newNor: number[] = [];
-    const newUV: number[] = [];
-    const newIdx: number[] = [];
-
-    for (const triStart of triStarts) {
-      for (let k = 0; k < 3; k++) {
-        const old = indices[triStart + k];
-        if (!vertexMap.has(old)) {
-          const n = newPos.length / 3;
-          vertexMap.set(old, n);
-          newPos.push(pos.getX(old), pos.getY(old), pos.getZ(old));
-          if (nor) newNor.push(nor.getX(old), nor.getY(old), nor.getZ(old));
-          if (uv) newUV.push(uv.getX(old), uv.getY(old));
-        }
-        newIdx.push(vertexMap.get(old)!);
-      }
-    }
-
-    const geo = new THREE.BufferGeometry();
-    geo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(newPos), 3));
-    if (nor) geo.setAttribute("normal", new THREE.BufferAttribute(new Float32Array(newNor), 3));
-    if (uv) geo.setAttribute("uv", new THREE.BufferAttribute(new Float32Array(newUV), 2));
-    geo.setIndex(new THREE.BufferAttribute(new Uint32Array(newIdx), 1));
-    geo.computeVertexNormals();
-    return geo;
-  });
-}
-
-function ChessScene({ containerRef }: { containerRef: React.RefObject<HTMLElement> }) {
+function ChessScene() {
   const fbxSource = useFBX("/models/chess-pieces.fbx");
-  // Load textures manually — FBXLoader can't resolve absolute Windows paths in browser
   const colorTex = useLoader(THREE.TextureLoader, "/models/Color.jpg");
   const normalTex = useLoader(THREE.TextureLoader, "/models/Normal.jpg");
 
-  const sceneGroupRef = useRef<THREE.Group>(null);
-  const pieceGroupRefs = useRef<THREE.Group[]>([]);
-  const initPosRef = useRef<THREE.Vector3[]>([]);
+  const groupRef = useRef<THREE.Group>(null);
+  const kingRef = useRef<THREE.Mesh>(null);
+  const queenRef = useRef<THREE.Mesh>(null);
   const timeRef = useRef(0);
-  const offsetsRef = useRef([new THREE.Vector3(), new THREE.Vector3()]);
-  const scaleTargets = useRef([1, 1]);
 
   useEffect(() => {
-    if (!sceneGroupRef.current || pieceGroupRefs.current.length > 0) return;
+    if (!groupRef.current || !fbxSource) return;
 
-    // Configure textures
+    // Clean up previous meshes
+    while (groupRef.current.children.length > 0) {
+      const child = groupRef.current.children[0];
+      if (child instanceof THREE.Mesh) {
+        child.geometry.dispose();
+        if (Array.isArray(child.material)) {
+          child.material.forEach(m => m.dispose());
+        } else {
+          child.material.dispose();
+        }
+      }
+      groupRef.current.remove(child);
+    }
+
+    // Texture setup
     colorTex.colorSpace = THREE.SRGBColorSpace;
     colorTex.flipY = false;
     normalTex.flipY = false;
 
     const clone = fbxSource.clone(true);
 
-    // Normalize scale to fit in ~5 units
+    // Scale to consistent size
     const rawBox = new THREE.Box3().setFromObject(clone);
     const rawSize = new THREE.Vector3();
     rawBox.getSize(rawSize);
-    const scaleFactor = 5 / Math.max(rawSize.x, rawSize.y, rawSize.z);
+    const maxDim = Math.max(rawSize.x, rawSize.y, rawSize.z);
+    const scaleFactor = 4.5 / maxDim;
     clone.scale.setScalar(scaleFactor);
 
-    // Center
+    // Center and tilt
     const scaledBox = new THREE.Box3().setFromObject(clone);
     const scaledCenter = scaledBox.getCenter(new THREE.Vector3());
-    clone.position.set(-scaledCenter.x, -scaledCenter.y - 0.5, -scaledCenter.z);
+    clone.position.set(-scaledCenter.x, -scaledCenter.y - 0.2, -scaledCenter.z);
+    clone.rotation.x = -0.15;
 
-    const meshes: THREE.Mesh[] = [];
+    // Separate King and Queen
+    let kingBounds = { min: 0, max: 0 };
+    let queenBounds = { min: 0, max: 0 };
+    let kingFound = false;
+    let queenFound = false;
+
     clone.traverse((obj) => {
-      if (obj instanceof THREE.Mesh) meshes.push(obj);
+      if (!(obj instanceof THREE.Mesh)) return;
+
+      const b = new THREE.Box3().setFromBufferAttribute(
+        obj.geometry.attributes.position as THREE.BufferAttribute
+      );
+
+      // Identify King (typically lower vertices) vs Queen (higher vertices)
+      const centerY = (b.min.y + b.max.y) / 2;
+
+      if (!kingFound || !queenFound) {
+        if (centerY < 0 && !kingFound) {
+          kingBounds = { min: b.min.x, max: b.max.x };
+          kingFound = true;
+        } else if (centerY > 0 && !queenFound) {
+          queenBounds = { min: b.min.x, max: b.max.x };
+          queenFound = true;
+        }
+      }
     });
 
-    const buildMat = (geo: THREE.BufferGeometry, baseMat: THREE.Material | THREE.Material[]): THREE.MeshStandardMaterial => {
-      // Infer piece color from bounding box center X to determine King (white) vs Queen (dark)
-      const b = new THREE.Box3().setFromBufferAttribute(geo.attributes.position as THREE.BufferAttribute);
-      const cx = (b.min.x + b.max.x) / 2;
-      // cx < 0 → King (left, white), cx >= 0 → Queen (right, dark/black)
-      const isKing = cx < 0;
+    // If bounds not found, fall back to Y-based split
+    let useYSplit = false;
+    if (!kingFound || !queenFound) {
+      useYSplit = true;
+    }
 
-      const mat = new THREE.MeshStandardMaterial({
+    // Build separate meshes
+    const kingGroup = new THREE.Group();
+    const queenGroup = new THREE.Group();
+
+    clone.traverse((obj) => {
+      if (!(obj instanceof THREE.Mesh)) return;
+
+      const geo = obj.geometry;
+      const pos = geo.attributes.position;
+
+      // Determine piece type
+      let isKing = false;
+      if (useYSplit) {
+        const b = new THREE.Box3().setFromBufferAttribute(pos as THREE.BufferAttribute);
+        const centerY = (b.min.y + b.max.y) / 2;
+        isKing = centerY < 0;
+      } else {
+        // Check if mesh belongs to king bounds
+        const b = new THREE.Box3().setFromBufferAttribute(pos as THREE.BufferAttribute);
+        isKing = (b.min.x + b.max.x) / 2 < (kingBounds.max + queenBounds.min) / 2;
+      }
+
+      // Create new material with premium quality
+      const material = new THREE.MeshStandardMaterial({
         map: colorTex,
         normalMap: normalTex,
-        roughness: isKing ? 0.3 : 0.25,
-        metalness: isKing ? 0.1 : 0.15,
+        normalScale: new THREE.Vector2(1.2, 1.2),
+        roughness: isKing ? 0.35 : 0.25,
+        metalness: isKing ? 0.85 : 0.9,
         envMapIntensity: 1.2,
+        vertexColors: false,
       });
 
-      // If no UV or texture looks wrong, tint via color
-      if (!geo.attributes.uv) {
-        mat.map = null;
-        mat.normalMap = null;
-        mat.color.set(isKing ? 0xf0ede8 : 0x1a1a1a);
+      const mesh = new THREE.Mesh(geo, material);
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+
+      if (isKing) {
+        kingGroup.add(mesh);
+      } else {
+        queenGroup.add(mesh);
       }
-
-      // Suppress unused warning
-      void baseMat;
-      return mat;
-    };
-
-    if (meshes.length === 1) {
-      const sourceMesh = meshes[0];
-      const components = splitByConnectedComponents(sourceMesh.geometry);
-
-      if (components.length >= 2) {
-        const sorted = components.map((geo) => {
-          const b = new THREE.Box3().setFromBufferAttribute(geo.attributes.position as THREE.BufferAttribute);
-          return { geo, cx: (b.min.x + b.max.x) / 2 };
-        }).sort((a, b) => a.cx - b.cx);
-
-        sorted.forEach(({ geo }, i) => {
-          const mat = buildMat(geo, sourceMesh.material);
-          const mesh = new THREE.Mesh(geo, mat);
-          mesh.castShadow = true;
-          mesh.position.copy(sourceMesh.position);
-          mesh.rotation.copy(sourceMesh.rotation);
-          mesh.scale.copy(sourceMesh.scale);
-
-          const group = new THREE.Group();
-          group.add(mesh);
-          group.position.z = i === 0 ? 0.6 : -0.3;
-          sceneGroupRef.current!.add(group);
-          pieceGroupRefs.current[i] = group;
-          initPosRef.current[i] = group.position.clone();
-        });
-
-        sceneGroupRef.current!.rotation.x = -0.18;
-        return;
-      }
-    }
-
-    // Fallback: multiple meshes
-    const childPieces = clone.children.filter((c) => {
-      const b = new THREE.Box3().setFromObject(c);
-      return !b.isEmpty();
-    });
-    childPieces.sort((a, b) => {
-      const ca = new THREE.Box3().setFromObject(a).getCenter(new THREE.Vector3());
-      const cb = new THREE.Box3().setFromObject(b).getCenter(new THREE.Vector3());
-      return ca.x - cb.x;
     });
 
-    if (childPieces.length >= 2) {
-      childPieces.forEach((child, i) => {
-        child.traverse((obj) => {
-          if (obj instanceof THREE.Mesh) {
-            const b = new THREE.Box3().setFromObject(obj);
-            obj.material = buildMat(obj.geometry, obj.material);
-            void b;
-          }
-        });
-        const g = new THREE.Group();
-        g.position.copy(child.position);
-        g.add(child);
-        sceneGroupRef.current!.add(g);
-        pieceGroupRefs.current[i] = g;
-        initPosRef.current[i] = g.position.clone();
-      });
-    } else {
-      clone.traverse((obj) => {
-        if (obj instanceof THREE.Mesh) {
-          obj.castShadow = true;
-          obj.material = new THREE.MeshStandardMaterial({
-            map: colorTex,
-            normalMap: normalTex,
-            roughness: 0.3,
-            metalness: 0.1,
-          });
-        }
-      });
-      sceneGroupRef.current.add(clone);
+    // Position King (left) and Queen (right)
+    kingGroup.position.set(-1.2, 0, 0);
+    queenGroup.position.set(1.2, 0, 0);
+
+    // Store refs for animation
+    if (kingGroup.children[0]) {
+      const mesh = kingGroup.children[0] as THREE.Mesh;
+      kingRef.current = mesh;
     }
+    if (queenGroup.children[0]) {
+      const mesh = queenGroup.children[0] as THREE.Mesh;
+      queenRef.current = mesh;
+    }
+
+    groupRef.current.add(kingGroup);
+    groupRef.current.add(queenGroup);
+
   }, [fbxSource, colorTex, normalTex]);
 
-  const { scrollYProgress } = useScroll({ target: containerRef });
-
-  useEffect(() => {
-    return scrollYProgress.on("change", (v) => {
-      if (pieceGroupRefs.current.length < 2) return;
-
-      if (v < 0.25) {
-        const t = v / 0.25;
-        offsetsRef.current[0].set(-3 * t, 0, 0);
-        offsetsRef.current[1].set(3 * t, 0, 0);
-        scaleTargets.current = [1, 1];
-      } else if (v < 0.5) {
-        const t = (v - 0.25) / 0.25;
-        offsetsRef.current[0].set(-3 - 2 * t, 0, -t);
-        offsetsRef.current[1].set(3 + 2 * t, 0, -t);
-        scaleTargets.current = [1, 1 + 0.15 * t];
-      } else {
-        offsetsRef.current[0].set(-12, 0, -2);
-        offsetsRef.current[1].set(12, 0, -2);
-        scaleTargets.current = [1, 1.15];
-      }
-    });
-  }, [scrollYProgress]);
-
   useFrame((_, delta) => {
-    if (!sceneGroupRef.current) return;
+    if (!groupRef.current) return;
     timeRef.current += delta;
-    const lerpSpeed = 2 * delta;
 
-    pieceGroupRefs.current.forEach((group, i) => {
-      const init = initPosRef.current[i];
-      if (!init) return;
-      const off = offsetsRef.current[i];
+    const t = timeRef.current;
 
-      group.position.x += (init.x + off.x - group.position.x) * lerpSpeed;
-      group.position.z += (init.z + off.z - group.position.z) * lerpSpeed;
+    // Gentle floating motion
+    groupRef.current.position.y = Math.sin(t * 0.5) * 0.08;
 
-      group.rotation.y = Math.sin(timeRef.current * 0.35 + i * Math.PI) * 0.05 + (i === 0 ? 0.15 : -0.15);
+    // Subtle rotation
+    groupRef.current.rotation.y = Math.sin(t * 0.3) * 0.06;
 
-      const st = scaleTargets.current[i];
-      group.scale.y += (st - group.scale.y) * lerpSpeed;
-      group.scale.z += (st - group.scale.z) * lerpSpeed;
-    });
+    // Micro-bobbing for individual pieces
+    if (kingRef.current) {
+      kingRef.current.position.y = Math.sin(t * 0.7 + 0.5) * 0.03;
+      kingRef.current.rotation.y = Math.sin(t * 0.4) * 0.02;
+    }
+    if (queenRef.current) {
+      queenRef.current.position.y = Math.sin(t * 0.6 + 1.0) * 0.025;
+      queenRef.current.rotation.y = Math.sin(t * 0.35 + 1.2) * 0.018;
+    }
   });
 
-  return <group ref={sceneGroupRef} />;
+  return <group ref={groupRef} />;
 }
 
-function SceneContent({ containerRef }: { containerRef: React.RefObject<HTMLElement> }) {
+function SceneContent() {
   return (
     <>
-      <ambientLight intensity={0.6} />
-      <directionalLight position={[3, 10, 6]} intensity={2.2} castShadow />
-      <directionalLight position={[-3, 6, 8]} intensity={0.7} />
-      <pointLight position={[-3, 4, 5]} intensity={1.0} color="#c9a84c" />
-      <pointLight position={[3, 4, 5]} intensity={1.0} color="#c9a84c" />
-      <Environment preset="studio" />
-      <ChessScene containerRef={containerRef} />
+      {/* Atmospheric fog for depth */}
+      <fog attach="fog" args={["#0a0a0a", 8, 25]} />
+
+      {/* Ambient lighting */}
+      <ambientLight intensity={0.4} color="#e8e0d0" />
+
+      {/* Key light - main illumination */}
+      <directionalLight
+        position={[3, 6, 5]}
+        intensity={1.4}
+        color="#fff5e6"
+        castShadow
+        shadow-mapSize={[2048, 2048]}
+        shadow-camera-far={30}
+        shadow-camera-left={-10}
+        shadow-camera-right={10}
+        shadow-camera-top={10}
+        shadow-camera-bottom={-10}
+        shadow-bias={-0.0001}
+      />
+
+      {/* Rim light - gold accent from back-right */}
+      <spotLight
+        position={[4, 3, -3]}
+        angle={0.6}
+        penumbra={0.8}
+        intensity={1.8}
+        color="#c9a84c"
+        castShadow
+      />
+
+      {/* Fill light - soft blue from left */}
+      <pointLight
+        position={[-4, 2, 3]}
+        intensity={0.5}
+        color="#a8c8e8"
+      />
+
+      {/* Gold accent light - front bottom */}
+      <pointLight
+        position={[0, -1, 4]}
+        intensity={0.8}
+        color="#e4c87a"
+      />
+
+      {/* Subtle overhead spotlight on pieces */}
+      <spotLight
+        position={[0, 8, 2]}
+        angle={0.4}
+        penumbra={0.6}
+        intensity={0.6}
+        color="#fff8f0"
+      />
+
+      <Environment preset="city" background={false} />
+
+      {/* Soft contact shadows for grounding */}
+      <ContactShadows
+        position={[0, -1.85, 0]}
+        opacity={0.6}
+        scale={8}
+        blur={2.5}
+        far={4}
+      />
+
+      <ChessScene />
     </>
   );
 }
@@ -385,39 +358,53 @@ export function HeroSection({ containerRef }: { containerRef: React.RefObject<HT
   }, []);
   if (!mounted) return null;
 
+  void containerRef;
+
   return (
     <div id="hero" className="snap-section flex flex-col items-center justify-center relative overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(201,168,76,0.05)_0%,transparent_70%)]" />
+      {/* Subtle background gradient */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(201,168,76,0.03)_0%,transparent_60%)]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-black/20" />
 
-      {/* Video frames streaming inward */}
+      {/* Video frames - very subtle background layer */}
       <div
-        className="absolute inset-0 overflow-hidden"
-        style={{ perspective: "800px", perspectiveOrigin: "50% 50%" }}
+        className="absolute inset-0 overflow-hidden opacity-30"
+        style={{ perspective: "1000px", perspectiveOrigin: "50% 50%" }}
       >
         {frames.map((frame) => (
           <StreamVideoFrame key={frame.id} frame={frame} />
         ))}
       </div>
 
-      {/* 3D Chess models */}
-      <div className="absolute inset-0">
+      {/* 3D Chess models - center stage */}
+      <div className="absolute inset-0 flex items-center justify-center">
         <Suspense fallback={null}>
           <Canvas
-            camera={{ position: [0, 3, 9], fov: 40 }}
-            gl={{ antialias: true, alpha: true }}
+            camera={{ position: [0, 1.2, 10], fov: 35 }}
+            gl={{
+              antialias: true,
+              alpha: true,
+              powerPreference: "high-performance",
+              stencil: false,
+              depth: true,
+            }}
             style={{ background: "transparent" }}
+            dpr={[1, 1.5]}
+            shadows
           >
-            <SceneContent containerRef={containerRef} />
+            <SceneContent />
           </Canvas>
         </Suspense>
       </div>
 
       {/* Hero text */}
-      <div className="relative z-10 text-center px-6 pointer-events-none">
-        <p className="text-xs font-mono uppercase tracking-[0.4em] text-[--gold]/70 mb-4">
-          AI Commentary Engine
-        </p>
-        <h1 className="text-5xl md:text-7xl font-bold text-white leading-tight mb-4">
+      <div className="relative z-20 text-center px-6 pointer-events-none">
+        <div className="mb-4">
+          <p className="text-[10px] md:text-xs font-mono uppercase tracking-[0.5em] text-[--gold]/60 mb-3">
+            AI Commentary Engine
+          </p>
+        </div>
+        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-tight mb-4">
           The Game{" "}
           <span
             className="font-serif italic font-normal"
@@ -425,12 +412,13 @@ export function HeroSection({ containerRef }: { containerRef: React.RefObject<HT
               background: "linear-gradient(135deg,#c9a84c,#e4c87a)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
+              filter: "drop-shadow(0 0 20px rgba(201,168,76,0.3))",
             }}
           >
             Speaks
           </span>
         </h1>
-        <p className="text-white/40 text-lg font-light max-w-md mx-auto">
+        <p className="text-white/35 text-base md:text-lg font-light max-w-md mx-auto leading-relaxed">
           Real-time AI commentary that transforms every move into a moment.
         </p>
       </div>

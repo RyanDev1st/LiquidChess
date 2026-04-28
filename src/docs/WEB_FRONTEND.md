@@ -44,12 +44,12 @@ When assets are missing, fallback content renders (e.g., solid colors, no audio)
 | Section | File | Notes |
 |---|---|---|
 | Hook | `HookSection.tsx` | EtheralShadow gold animation (21stdev), typewriter; overlay reduced to /20 opacity |
-| Hero | `HeroSection.tsx` | R3F Canvas; single FBX split by connected components into King+Queen; camera [0,3,9] fov 40; scene tilt -0.18X |
+| Hero | `HeroSection.tsx` | R3F Canvas; FBX split King+Queen with premium materials (high metalness, normal maps), cinematic 3-point lighting with gold accents, ContactShadows, animated floating motion; camera [0,1.2,10] fov 35; scene tilt -0.15X; video frames reduced to 4 (30% opacity) |
 | Voice Showcase | `VoiceShowcaseSection.tsx` | Voice card marquee |
 | Demo | `DemoSection.tsx` | Video comparison + live chat + SplineKeyboard toggle; plain snap-section (ContainerScroll removed) |
 | Testimonials | `TestimonialSection.tsx` | 90vw, 65vh; hover gold glow; click → portal 3D card flip (profile + usage stats) |
 | CTA | `CTASection.tsx` | 3D models + screen + Get Started button |
-| FAQ | `FAQSection.tsx` | Accordion |
+| FAQ | `CTASection.tsx` | Accordion |
 | Footer | `FooterSection.tsx` | FlickeringGrid banner + CodePen-style horizontal rows (bold label \| links) |
 
 ## Notes
