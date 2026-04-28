@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense, useRef, useEffect, useState, useMemo } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useLoader } from "@react-three/fiber";
 import { useFBX, Environment } from "@react-three/drei";
 import * as THREE from "three";
 import { useScroll } from "framer-motion";
@@ -21,8 +21,6 @@ const generateFrames = (): VideoFrameData[] =>
     rotation: (Math.random() - 0.5) * 12,
   }));
 
-// Split a fused BufferGeometry into separate geometries per connected component.
-// Works on indexed geometries; returns original if only one component is found.
 function splitByConnectedComponents(geometry: THREE.BufferGeometry): THREE.BufferGeometry[] {
   const index = geometry.index;
   if (!index) return [geometry];
@@ -30,7 +28,6 @@ function splitByConnectedComponents(geometry: THREE.BufferGeometry): THREE.Buffe
   const vertCount = geometry.attributes.position.count;
   const indices = index.array as Uint16Array | Uint32Array;
 
-  // Union-Find with path compression
   const parent = new Int32Array(vertCount);
   for (let i = 0; i < vertCount; i++) parent[i] = i;
 
@@ -40,13 +37,11 @@ function splitByConnectedComponents(geometry: THREE.BufferGeometry): THREE.Buffe
   }
   function union(a: number, b: number) { parent[find(a)] = find(b); }
 
-  // Union vertices sharing a triangle
   for (let i = 0; i < indices.length; i += 3) {
     union(indices[i], indices[i + 1]);
     union(indices[i + 1], indices[i + 2]);
   }
 
-  // Group triangle starts by root component
   const components = new Map<number, number[]>();
   for (let i = 0; i < indices.length; i += 3) {
     const root = find(indices[i]);
@@ -94,6 +89,10 @@ function splitByConnectedComponents(geometry: THREE.BufferGeometry): THREE.Buffe
 
 function ChessScene({ containerRef }: { containerRef: React.RefObject<HTMLElement> }) {
   const fbxSource = useFBX("/models/chess-pieces.fbx");
+  // Load textures manually — FBXLoader can't resolve absolute Windows paths in browser
+  const colorTex = useLoader(THREE.TextureLoader, "/models/Color.jpg");
+  const normalTex = useLoader(THREE.TextureLoader, "/models/Normal.jpg");
+
   const sceneGroupRef = useRef<THREE.Group>(null);
   const pieceGroupRefs = useRef<THREE.Group[]>([]);
   const initPosRef = useRef<THREE.Vector3[]>([]);
@@ -104,40 +103,69 @@ function ChessScene({ containerRef }: { containerRef: React.RefObject<HTMLElemen
   useEffect(() => {
     if (!sceneGroupRef.current || pieceGroupRefs.current.length > 0) return;
 
+    // Configure textures
+    colorTex.colorSpace = THREE.SRGBColorSpace;
+    colorTex.flipY = false;
+    normalTex.flipY = false;
+
     const clone = fbxSource.clone(true);
 
-    // Normalize scale
+    // Normalize scale to fit in ~5 units
     const rawBox = new THREE.Box3().setFromObject(clone);
     const rawSize = new THREE.Vector3();
     rawBox.getSize(rawSize);
     const scaleFactor = 5 / Math.max(rawSize.x, rawSize.y, rawSize.z);
     clone.scale.setScalar(scaleFactor);
 
-    // Center vertically; keep XZ as original
+    // Center
     const scaledBox = new THREE.Box3().setFromObject(clone);
     const scaledCenter = scaledBox.getCenter(new THREE.Vector3());
-    clone.position.set(-scaledCenter.x, -scaledCenter.y - 1, -scaledCenter.z);
+    clone.position.set(-scaledCenter.x, -scaledCenter.y - 0.5, -scaledCenter.z);
 
-    // Find the fused mesh in the clone and split into two pieces
     const meshes: THREE.Mesh[] = [];
     clone.traverse((obj) => {
       if (obj instanceof THREE.Mesh) meshes.push(obj);
     });
 
+    const buildMat = (geo: THREE.BufferGeometry, baseMat: THREE.Material | THREE.Material[]): THREE.MeshStandardMaterial => {
+      // Infer piece color from bounding box center X to determine King (white) vs Queen (dark)
+      const b = new THREE.Box3().setFromBufferAttribute(geo.attributes.position as THREE.BufferAttribute);
+      const cx = (b.min.x + b.max.x) / 2;
+      // cx < 0 → King (left, white), cx >= 0 → Queen (right, dark/black)
+      const isKing = cx < 0;
+
+      const mat = new THREE.MeshStandardMaterial({
+        map: colorTex,
+        normalMap: normalTex,
+        roughness: isKing ? 0.3 : 0.25,
+        metalness: isKing ? 0.1 : 0.15,
+        envMapIntensity: 1.2,
+      });
+
+      // If no UV or texture looks wrong, tint via color
+      if (!geo.attributes.uv) {
+        mat.map = null;
+        mat.normalMap = null;
+        mat.color.set(isKing ? 0xf0ede8 : 0x1a1a1a);
+      }
+
+      // Suppress unused warning
+      void baseMat;
+      return mat;
+    };
+
     if (meshes.length === 1) {
-      // Single fused mesh — split by connected components
       const sourceMesh = meshes[0];
       const components = splitByConnectedComponents(sourceMesh.geometry);
 
       if (components.length >= 2) {
-        // Sort by bounding box center X: [0] = left (King), [1] = right (Queen)
         const sorted = components.map((geo) => {
           const b = new THREE.Box3().setFromBufferAttribute(geo.attributes.position as THREE.BufferAttribute);
           return { geo, cx: (b.min.x + b.max.x) / 2 };
         }).sort((a, b) => a.cx - b.cx);
 
         sorted.forEach(({ geo }, i) => {
-          const mat = (sourceMesh.material as THREE.Material).clone ? (sourceMesh.material as THREE.Material).clone() : sourceMesh.material;
+          const mat = buildMat(geo, sourceMesh.material);
           const mesh = new THREE.Mesh(geo, mat);
           mesh.castShadow = true;
           mesh.position.copy(sourceMesh.position);
@@ -146,21 +174,18 @@ function ChessScene({ containerRef }: { containerRef: React.RefObject<HTMLElemen
 
           const group = new THREE.Group();
           group.add(mesh);
-          // King (i=0) slightly forward, Queen (i=1) slightly back
           group.position.z = i === 0 ? 0.6 : -0.3;
           sceneGroupRef.current!.add(group);
           pieceGroupRefs.current[i] = group;
           initPosRef.current[i] = group.position.clone();
         });
-        // Tilt entire scene for top-down perspective matching ref.png
-        sceneGroupRef.current!.rotation.x = -0.18;
 
-        // Remove the original fused clone from scene (pieces added individually)
+        sceneGroupRef.current!.rotation.x = -0.18;
         return;
       }
     }
 
-    // Fallback: multiple separate meshes already, or split failed — use child groups
+    // Fallback: multiple meshes
     const childPieces = clone.children.filter((c) => {
       const b = new THREE.Box3().setFromObject(c);
       return !b.isEmpty();
@@ -173,6 +198,13 @@ function ChessScene({ containerRef }: { containerRef: React.RefObject<HTMLElemen
 
     if (childPieces.length >= 2) {
       childPieces.forEach((child, i) => {
+        child.traverse((obj) => {
+          if (obj instanceof THREE.Mesh) {
+            const b = new THREE.Box3().setFromObject(obj);
+            obj.material = buildMat(obj.geometry, obj.material);
+            void b;
+          }
+        });
         const g = new THREE.Group();
         g.position.copy(child.position);
         g.add(child);
@@ -181,11 +213,20 @@ function ChessScene({ containerRef }: { containerRef: React.RefObject<HTMLElemen
         initPosRef.current[i] = g.position.clone();
       });
     } else {
-      // Last fallback: render whole model as single unit
-      clone.traverse((obj) => { if (obj instanceof THREE.Mesh) obj.castShadow = true; });
+      clone.traverse((obj) => {
+        if (obj instanceof THREE.Mesh) {
+          obj.castShadow = true;
+          obj.material = new THREE.MeshStandardMaterial({
+            map: colorTex,
+            normalMap: normalTex,
+            roughness: 0.3,
+            metalness: 0.1,
+          });
+        }
+      });
       sceneGroupRef.current.add(clone);
     }
-  }, [fbxSource]);
+  }, [fbxSource, colorTex, normalTex]);
 
   const { scrollYProgress } = useScroll({ target: containerRef });
 
@@ -224,7 +265,6 @@ function ChessScene({ containerRef }: { containerRef: React.RefObject<HTMLElemen
       group.position.x += (init.x + off.x - group.position.x) * lerpSpeed;
       group.position.z += (init.z + off.z - group.position.z) * lerpSpeed;
 
-      // Idle sway — King faces slightly right, Queen slightly left (inward toward each other)
       group.rotation.y = Math.sin(timeRef.current * 0.35 + i * Math.PI) * 0.05 + (i === 0 ? 0.15 : -0.15);
 
       const st = scaleTargets.current[i];
@@ -239,11 +279,11 @@ function ChessScene({ containerRef }: { containerRef: React.RefObject<HTMLElemen
 function SceneContent({ containerRef }: { containerRef: React.RefObject<HTMLElement> }) {
   return (
     <>
-      <ambientLight intensity={0.5} />
-      <directionalLight position={[3, 10, 6]} intensity={2.0} castShadow />
-      <directionalLight position={[-3, 6, 8]} intensity={0.6} />
-      <pointLight position={[-3, 4, 5]} intensity={0.9} color="#c9a84c" />
-      <pointLight position={[3, 4, 5]} intensity={0.9} color="#c9a84c" />
+      <ambientLight intensity={0.6} />
+      <directionalLight position={[3, 10, 6]} intensity={2.2} castShadow />
+      <directionalLight position={[-3, 6, 8]} intensity={0.7} />
+      <pointLight position={[-3, 4, 5]} intensity={1.0} color="#c9a84c" />
+      <pointLight position={[3, 4, 5]} intensity={1.0} color="#c9a84c" />
       <Environment preset="studio" />
       <ChessScene containerRef={containerRef} />
     </>
