@@ -82,21 +82,24 @@ src/
 │       ├── package.json
 │       ├── vite.config.ts
 │       ├── tsconfig.json
+│       ├── public/
+│       │   └── models/            # Static 3D assets (FBX)
+│       │   └── videos/            # Video assets
+│       │   └── commentations/     # Audio assets
 │       └── src/
-│           ├── App.tsx           # Router + ThemeProvider root
+│           ├── App.tsx           # Hook gate + landing root
 │           ├── main.tsx          # Entry point
-│           ├── routes.ts         # SPA route definitions
 │           ├── index.css         # Global CSS (design tokens, dark theme)
 │           ├── components/       # Shared UI components
-│           │   ├── ui/           # ShadCN base components
-│           │   ├── abyss/        # Cosmic-theme variants + design tokens
+│           │   ├── ui/           # ShadCN base components + 21st.dev blocks (ContainerScroll)
 │           │   ├── landing/      # Landing-page-specific components
-│           │   ├── figma/        # Figma-exported components
-│           │   └── voice-selector/
+│           │   ├── three/        # R3F/Spline 3D components
+│           │   └── layout/       # Layout components (Header)
 │           ├── pages/            # Route-level page components
-│           ├── guidelines/       # Design constraint docs
-│           ├── site/             # Site-wide layout helpers
-│           └── styles/           # Additional CSS modules
+│           │   └── landing/
+│           │       └── index.tsx # LandingPage export
+│           ├── hooks/            # Scroll and interaction hooks
+│           └── lib/              # Utilities (cn, etc.)
 │
 ├── Claude/                       # Obsidian vault (design research + wiki)
 │   ├── Welcome.md

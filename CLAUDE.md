@@ -17,8 +17,8 @@ Claude-facing compatibility shim. Route to the canonical layer, not this file.
 4. For design tasks under `src/design/`, follow `src/design/CONTEXT.md`.
 5. Ignore `src/node_modules/` and `src/rag_storage/` in all operations.
 6. Always execute inline, do not use subagents for medium to high-signal tasks.
-7. Always update `src\docs\SCHEMA.md` and `src\docs\WEB_FRONTEND.md`; `src\docs\memory` with learnings and progresses after each phase. 
-
+7. Always update `src\docs\SCHEMA.md` and `src\docs\WEB_FRONTEND.md`; `src\docs\memory` with learnings and progresses after each phase. Conversely, always check these files for reference before executing any task.
+8. After each change, git commit with a concise message describing the change, and push to the remote repository.
 
 ## Project Schema
 

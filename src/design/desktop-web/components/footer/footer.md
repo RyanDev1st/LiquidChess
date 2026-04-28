@@ -11,6 +11,3 @@ Change the "Streamline Your Workflow" to "Elevate YOUR Experience"
 
 
 take inspiration from image-2.png which is from CodePen's footer. The main show here is that hook: "CodePen For Social Community" (The first words on each row). I want you to position so as to follow this creative design. But put it horizontal. 
-
-Audit: 
-The typography is still not like the original. The original is like a matrix+pixel inspired kind of typography. Adjust so the typography is exactly like so. The current typography is just the text being transparent and rely on the matrice movement in the background for the pixel feel. 
