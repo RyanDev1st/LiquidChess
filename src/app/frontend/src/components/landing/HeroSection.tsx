@@ -2,7 +2,7 @@
 
 import { Suspense, useRef, useEffect, useState, useMemo } from "react";
 import { Canvas, useFrame, useLoader } from "@react-three/fiber";
-import { useFBX, ContactShadows } from "@react-three/drei";
+import { useFBX, ContactShadows, Environment } from "@react-three/drei";
 import * as THREE from "three";
 
 interface VideoFrameData {
