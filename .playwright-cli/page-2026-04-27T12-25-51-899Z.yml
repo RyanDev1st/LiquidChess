@@ -1,0 +1,581 @@
+- main "Liquid Chess landing page" [ref=e4]:
+  - generic [ref=e5]:
+    - generic [ref=e6]:
+      - link "Liquid Chess home" [ref=e7] [cursor=pointer]:
+        - /url: "#hero"
+        - img [ref=e9]
+        - generic [ref=e11]: Liquid Chess
+      - navigation "Primary navigation" [ref=e12]:
+        - link "Features" [ref=e13] [cursor=pointer]:
+          - /url: "#hero"
+        - link "Voices" [ref=e14] [cursor=pointer]:
+          - /url: "#voices"
+        - link "Demo" [ref=e15] [cursor=pointer]:
+          - /url: "#demo"
+        - link "FAQ" [ref=e16] [cursor=pointer]:
+          - /url: "#faq"
+      - generic [ref=e17]:
+        - link "Sign In" [ref=e18] [cursor=pointer]:
+          - /url: "#demo"
+        - link "Get Started" [ref=e19] [cursor=pointer]:
+          - /url: "#cta"
+    - generic [ref=e20]:
+      - generic [ref=e21]:
+        - paragraph [ref=e22]:
+          - img [ref=e23]
+          - text: AI-powered chess commentary
+        - heading "Every match can sound like a finals broadcast." [level=1] [ref=e29]
+        - paragraph [ref=e30]: Liquid Chess turns positions, clocks, and chat energy into a live commentary layer built for streams.
+        - generic [ref=e31]:
+          - link "Watch demo" [ref=e32] [cursor=pointer]:
+            - /url: "#demo"
+            - text: Watch demo
+            - img [ref=e33]
+          - link "Browse voices" [ref=e35] [cursor=pointer]:
+            - /url: "#voices"
+      - generic "Playable commentary preview frames" [ref=e36]:
+        - article [ref=e37]:
+          - generic [ref=e38]:
+            - img [ref=e39]
+            - generic [ref=e41]: Queen trap
+          - paragraph [ref=e42]: Hover ready
+        - article [ref=e43]:
+          - generic [ref=e44]:
+            - img [ref=e45]
+            - generic [ref=e47]: Blitz save
+          - paragraph [ref=e48]: Hover ready
+        - article [ref=e49]:
+          - generic [ref=e50]:
+            - img [ref=e51]
+            - generic [ref=e53]: Endgame net
+          - paragraph [ref=e54]: Hover ready
+        - article [ref=e55]:
+          - generic [ref=e56]:
+            - img [ref=e57]
+            - generic [ref=e59]: Caster cam
+          - paragraph [ref=e60]: Hover ready
+        - article [ref=e61]:
+          - generic [ref=e62]:
+            - img [ref=e63]
+            - generic [ref=e65]: Rook lift
+          - paragraph [ref=e66]: Hover ready
+        - article [ref=e67]:
+          - generic [ref=e68]:
+            - img [ref=e69]
+            - generic [ref=e71]: Mate threat
+          - paragraph [ref=e72]: Hover ready
+  - generic [ref=e75]:
+    - generic [ref=e76]:
+      - heading "Trusted by leagues, casters, creators" [level=2] [ref=e77]
+      - generic "Trusted partner placeholders" [ref=e78]:
+        - generic [ref=e79]:
+          - generic [ref=e80]: FIDE
+          - generic [ref=e81]: Twitch
+          - generic [ref=e82]: Chess Club
+          - generic [ref=e83]: Arena
+          - generic [ref=e84]: OBS
+          - generic [ref=e85]: Creators
+          - generic [ref=e86]: Rapid League
+          - generic [ref=e87]: FIDE
+          - generic [ref=e88]: Twitch
+          - generic [ref=e89]: Chess Club
+          - generic [ref=e90]: Arena
+          - generic [ref=e91]: OBS
+          - generic [ref=e92]: Creators
+          - generic [ref=e93]: Rapid League
+    - generic [ref=e94]:
+      - paragraph [ref=e95]:
+        - img [ref=e96]
+        - text: Voice showcase
+      - heading "Pick the room. Liquid Chess finds the voice." [level=2] [ref=e100]
+    - generic [ref=e101]:
+      - button "Grandmaster Pulse deep tactical reads" [ref=e102] [cursor=pointer]:
+        - generic [ref=e103]: Grandmaster Pulse
+        - generic [ref=e104]: deep tactical reads
+      - button "Blitz Arena rapid hype calls" [ref=e105] [cursor=pointer]:
+        - generic [ref=e106]: Blitz Arena
+        - generic [ref=e107]: rapid hype calls
+      - button "Coach Lens clear learning moments" [ref=e108] [cursor=pointer]:
+        - generic [ref=e109]: Coach Lens
+        - generic [ref=e110]: clear learning moments
+      - button "Endgame Velvet calm late-game tension" [ref=e111] [cursor=pointer]:
+        - generic [ref=e112]: Endgame Velvet
+        - generic [ref=e113]: calm late-game tension
+      - button "Crowd Reactor chat-aware energy" [ref=e114] [cursor=pointer]:
+        - generic [ref=e115]: Crowd Reactor
+        - generic [ref=e116]: chat-aware energy
+      - button "Opening Lab sharp prep narration" [ref=e117] [cursor=pointer]:
+        - generic [ref=e118]: Opening Lab
+        - generic [ref=e119]: sharp prep narration
+  - generic [ref=e121]:
+    - generic [ref=e122]:
+      - paragraph [ref=e123]:
+        - img [ref=e124]
+        - text: Live control demo
+      - heading "One keyboard tap changes the broadcast." [level=2] [ref=e126]
+    - generic [ref=e127]:
+      - generic [ref=e128]:
+        - button "Ctrl C" [ref=e132] [cursor=pointer]:
+          - generic [ref=e133]: Ctrl
+          - generic [ref=e134]: C
+        - paragraph [ref=e135]: Commentator AI muted
+      - img [ref=e136]
+      - generic [ref=e205]:
+        - generic [ref=e206]: RAW GAME AUDIO
+        - paragraph [ref=e207]: Muted analysis. Sparse room reaction.
+      - complementary [ref=e209]:
+        - generic [ref=e210]:
+          - strong [ref=e212]: LIVE CHAT
+          - img [ref=e213]
+        - generic [ref=e217]:
+          - paragraph [ref=e218]:
+            - generic [ref=e219]: user_1
+            - text: quiet position
+          - paragraph [ref=e220]:
+            - generic [ref=e221]: user_2
+            - text: developing
+          - paragraph [ref=e222]:
+            - generic [ref=e223]: user_3
+            - text: clock check
+          - paragraph [ref=e224]:
+            - generic [ref=e225]: user_4
+            - text: small edge
+  - generic [ref=e231]:
+    - generic [ref=e232]:
+      - paragraph [ref=e233]:
+        - img [ref=e234]
+        - text: Proof from the booth
+      - heading "Built for the moments viewers repeat back." [level=2] [ref=e237]
+    - generic [ref=e238]:
+      - generic [ref=e239]:
+        - article [ref=e240]:
+          - generic [ref=e241]: M
+          - generic [ref=e242]: Mira Chen
+          - generic [ref=e243]: Tournament director
+          - paragraph [ref=e244]: Our rapid finals finally sounded as alive as the room felt.
+        - article [ref=e245]:
+          - generic [ref=e246]: J
+          - generic [ref=e247]: Jon Bell
+          - generic [ref=e248]: Chess streamer
+          - paragraph [ref=e249]: The chat went from quiet to quoting the commentator in two games.
+        - article [ref=e250]:
+          - generic [ref=e251]: A
+          - generic [ref=e252]: Amara Stone
+          - generic [ref=e253]: Club caster
+          - paragraph [ref=e254]: It catches plans early without drowning out the human host.
+        - article [ref=e255]:
+          - generic [ref=e256]: T
+          - generic [ref=e257]: Theo Ramos
+          - generic [ref=e258]: League producer
+          - paragraph [ref=e259]: We tested it as a filler track and kept it for the whole event.
+        - article [ref=e260]:
+          - generic [ref=e261]: "N"
+          - generic [ref=e262]: Nadia Ilyin
+          - generic [ref=e263]: Creator
+          - paragraph [ref=e264]: The best part is how fast it changes tone with the match.
+        - article [ref=e265]:
+          - generic [ref=e266]: M
+          - generic [ref=e267]: Malik Rowe
+          - generic [ref=e268]: Coach
+          - paragraph [ref=e269]: Students stayed for the endgames. That never happens by accident.
+        - article [ref=e270]:
+          - generic [ref=e271]: E
+          - generic [ref=e272]: Evan Park
+          - generic [ref=e273]: Broadcast engineer
+          - paragraph [ref=e274]: The visual states were clear enough for nontechnical staff.
+        - article [ref=e275]:
+          - generic [ref=e276]: I
+          - generic [ref=e277]: Iris Novak
+          - generic [ref=e278]: Community lead
+          - paragraph [ref=e279]: It made amateur games feel produced without pretending to be human.
+        - article [ref=e280]:
+          - generic [ref=e281]: M
+          - generic [ref=e282]: Mira Chen
+          - generic [ref=e283]: Tournament director
+          - paragraph [ref=e284]: Our rapid finals finally sounded as alive as the room felt.
+        - article [ref=e285]:
+          - generic [ref=e286]: J
+          - generic [ref=e287]: Jon Bell
+          - generic [ref=e288]: Chess streamer
+          - paragraph [ref=e289]: The chat went from quiet to quoting the commentator in two games.
+        - article [ref=e290]:
+          - generic [ref=e291]: A
+          - generic [ref=e292]: Amara Stone
+          - generic [ref=e293]: Club caster
+          - paragraph [ref=e294]: It catches plans early without drowning out the human host.
+        - article [ref=e295]:
+          - generic [ref=e296]: T
+          - generic [ref=e297]: Theo Ramos
+          - generic [ref=e298]: League producer
+          - paragraph [ref=e299]: We tested it as a filler track and kept it for the whole event.
+        - article [ref=e300]:
+          - generic [ref=e301]: "N"
+          - generic [ref=e302]: Nadia Ilyin
+          - generic [ref=e303]: Creator
+          - paragraph [ref=e304]: The best part is how fast it changes tone with the match.
+        - article [ref=e305]:
+          - generic [ref=e306]: M
+          - generic [ref=e307]: Malik Rowe
+          - generic [ref=e308]: Coach
+          - paragraph [ref=e309]: Students stayed for the endgames. That never happens by accident.
+        - article [ref=e310]:
+          - generic [ref=e311]: E
+          - generic [ref=e312]: Evan Park
+          - generic [ref=e313]: Broadcast engineer
+          - paragraph [ref=e314]: The visual states were clear enough for nontechnical staff.
+        - article [ref=e315]:
+          - generic [ref=e316]: I
+          - generic [ref=e317]: Iris Novak
+          - generic [ref=e318]: Community lead
+          - paragraph [ref=e319]: It made amateur games feel produced without pretending to be human.
+      - generic [ref=e320]:
+        - article [ref=e321]:
+          - generic [ref=e322]: M
+          - generic [ref=e323]: Mira Chen
+          - generic [ref=e324]: Tournament director
+          - paragraph [ref=e325]: Our rapid finals finally sounded as alive as the room felt.
+        - article [ref=e326]:
+          - generic [ref=e327]: J
+          - generic [ref=e328]: Jon Bell
+          - generic [ref=e329]: Chess streamer
+          - paragraph [ref=e330]: The chat went from quiet to quoting the commentator in two games.
+        - article [ref=e331]:
+          - generic [ref=e332]: A
+          - generic [ref=e333]: Amara Stone
+          - generic [ref=e334]: Club caster
+          - paragraph [ref=e335]: It catches plans early without drowning out the human host.
+        - article [ref=e336]:
+          - generic [ref=e337]: T
+          - generic [ref=e338]: Theo Ramos
+          - generic [ref=e339]: League producer
+          - paragraph [ref=e340]: We tested it as a filler track and kept it for the whole event.
+        - article [ref=e341]:
+          - generic [ref=e342]: "N"
+          - generic [ref=e343]: Nadia Ilyin
+          - generic [ref=e344]: Creator
+          - paragraph [ref=e345]: The best part is how fast it changes tone with the match.
+        - article [ref=e346]:
+          - generic [ref=e347]: M
+          - generic [ref=e348]: Malik Rowe
+          - generic [ref=e349]: Coach
+          - paragraph [ref=e350]: Students stayed for the endgames. That never happens by accident.
+        - article [ref=e351]:
+          - generic [ref=e352]: E
+          - generic [ref=e353]: Evan Park
+          - generic [ref=e354]: Broadcast engineer
+          - paragraph [ref=e355]: The visual states were clear enough for nontechnical staff.
+        - article [ref=e356]:
+          - generic [ref=e357]: I
+          - generic [ref=e358]: Iris Novak
+          - generic [ref=e359]: Community lead
+          - paragraph [ref=e360]: It made amateur games feel produced without pretending to be human.
+        - article [ref=e361]:
+          - generic [ref=e362]: M
+          - generic [ref=e363]: Mira Chen
+          - generic [ref=e364]: Tournament director
+          - paragraph [ref=e365]: Our rapid finals finally sounded as alive as the room felt.
+        - article [ref=e366]:
+          - generic [ref=e367]: J
+          - generic [ref=e368]: Jon Bell
+          - generic [ref=e369]: Chess streamer
+          - paragraph [ref=e370]: The chat went from quiet to quoting the commentator in two games.
+        - article [ref=e371]:
+          - generic [ref=e372]: A
+          - generic [ref=e373]: Amara Stone
+          - generic [ref=e374]: Club caster
+          - paragraph [ref=e375]: It catches plans early without drowning out the human host.
+        - article [ref=e376]:
+          - generic [ref=e377]: T
+          - generic [ref=e378]: Theo Ramos
+          - generic [ref=e379]: League producer
+          - paragraph [ref=e380]: We tested it as a filler track and kept it for the whole event.
+        - article [ref=e381]:
+          - generic [ref=e382]: "N"
+          - generic [ref=e383]: Nadia Ilyin
+          - generic [ref=e384]: Creator
+          - paragraph [ref=e385]: The best part is how fast it changes tone with the match.
+        - article [ref=e386]:
+          - generic [ref=e387]: M
+          - generic [ref=e388]: Malik Rowe
+          - generic [ref=e389]: Coach
+          - paragraph [ref=e390]: Students stayed for the endgames. That never happens by accident.
+        - article [ref=e391]:
+          - generic [ref=e392]: E
+          - generic [ref=e393]: Evan Park
+          - generic [ref=e394]: Broadcast engineer
+          - paragraph [ref=e395]: The visual states were clear enough for nontechnical staff.
+        - article [ref=e396]:
+          - generic [ref=e397]: I
+          - generic [ref=e398]: Iris Novak
+          - generic [ref=e399]: Community lead
+          - paragraph [ref=e400]: It made amateur games feel produced without pretending to be human.
+      - generic [ref=e401]:
+        - article [ref=e402]:
+          - generic [ref=e403]: M
+          - generic [ref=e404]: Mira Chen
+          - generic [ref=e405]: Tournament director
+          - paragraph [ref=e406]: Our rapid finals finally sounded as alive as the room felt.
+        - article [ref=e407]:
+          - generic [ref=e408]: J
+          - generic [ref=e409]: Jon Bell
+          - generic [ref=e410]: Chess streamer
+          - paragraph [ref=e411]: The chat went from quiet to quoting the commentator in two games.
+        - article [ref=e412]:
+          - generic [ref=e413]: A
+          - generic [ref=e414]: Amara Stone
+          - generic [ref=e415]: Club caster
+          - paragraph [ref=e416]: It catches plans early without drowning out the human host.
+        - article [ref=e417]:
+          - generic [ref=e418]: T
+          - generic [ref=e419]: Theo Ramos
+          - generic [ref=e420]: League producer
+          - paragraph [ref=e421]: We tested it as a filler track and kept it for the whole event.
+        - article [ref=e422]:
+          - generic [ref=e423]: "N"
+          - generic [ref=e424]: Nadia Ilyin
+          - generic [ref=e425]: Creator
+          - paragraph [ref=e426]: The best part is how fast it changes tone with the match.
+        - article [ref=e427]:
+          - generic [ref=e428]: M
+          - generic [ref=e429]: Malik Rowe
+          - generic [ref=e430]: Coach
+          - paragraph [ref=e431]: Students stayed for the endgames. That never happens by accident.
+        - article [ref=e432]:
+          - generic [ref=e433]: E
+          - generic [ref=e434]: Evan Park
+          - generic [ref=e435]: Broadcast engineer
+          - paragraph [ref=e436]: The visual states were clear enough for nontechnical staff.
+        - article [ref=e437]:
+          - generic [ref=e438]: I
+          - generic [ref=e439]: Iris Novak
+          - generic [ref=e440]: Community lead
+          - paragraph [ref=e441]: It made amateur games feel produced without pretending to be human.
+        - article [ref=e442]:
+          - generic [ref=e443]: M
+          - generic [ref=e444]: Mira Chen
+          - generic [ref=e445]: Tournament director
+          - paragraph [ref=e446]: Our rapid finals finally sounded as alive as the room felt.
+        - article [ref=e447]:
+          - generic [ref=e448]: J
+          - generic [ref=e449]: Jon Bell
+          - generic [ref=e450]: Chess streamer
+          - paragraph [ref=e451]: The chat went from quiet to quoting the commentator in two games.
+        - article [ref=e452]:
+          - generic [ref=e453]: A
+          - generic [ref=e454]: Amara Stone
+          - generic [ref=e455]: Club caster
+          - paragraph [ref=e456]: It catches plans early without drowning out the human host.
+        - article [ref=e457]:
+          - generic [ref=e458]: T
+          - generic [ref=e459]: Theo Ramos
+          - generic [ref=e460]: League producer
+          - paragraph [ref=e461]: We tested it as a filler track and kept it for the whole event.
+        - article [ref=e462]:
+          - generic [ref=e463]: "N"
+          - generic [ref=e464]: Nadia Ilyin
+          - generic [ref=e465]: Creator
+          - paragraph [ref=e466]: The best part is how fast it changes tone with the match.
+        - article [ref=e467]:
+          - generic [ref=e468]: M
+          - generic [ref=e469]: Malik Rowe
+          - generic [ref=e470]: Coach
+          - paragraph [ref=e471]: Students stayed for the endgames. That never happens by accident.
+        - article [ref=e472]:
+          - generic [ref=e473]: E
+          - generic [ref=e474]: Evan Park
+          - generic [ref=e475]: Broadcast engineer
+          - paragraph [ref=e476]: The visual states were clear enough for nontechnical staff.
+        - article [ref=e477]:
+          - generic [ref=e478]: I
+          - generic [ref=e479]: Iris Novak
+          - generic [ref=e480]: Community lead
+          - paragraph [ref=e481]: It made amateur games feel produced without pretending to be human.
+      - generic [ref=e482]:
+        - article [ref=e483]:
+          - generic [ref=e484]: M
+          - generic [ref=e485]: Mira Chen
+          - generic [ref=e486]: Tournament director
+          - paragraph [ref=e487]: Our rapid finals finally sounded as alive as the room felt.
+        - article [ref=e488]:
+          - generic [ref=e489]: J
+          - generic [ref=e490]: Jon Bell
+          - generic [ref=e491]: Chess streamer
+          - paragraph [ref=e492]: The chat went from quiet to quoting the commentator in two games.
+        - article [ref=e493]:
+          - generic [ref=e494]: A
+          - generic [ref=e495]: Amara Stone
+          - generic [ref=e496]: Club caster
+          - paragraph [ref=e497]: It catches plans early without drowning out the human host.
+        - article [ref=e498]:
+          - generic [ref=e499]: T
+          - generic [ref=e500]: Theo Ramos
+          - generic [ref=e501]: League producer
+          - paragraph [ref=e502]: We tested it as a filler track and kept it for the whole event.
+        - article [ref=e503]:
+          - generic [ref=e504]: "N"
+          - generic [ref=e505]: Nadia Ilyin
+          - generic [ref=e506]: Creator
+          - paragraph [ref=e507]: The best part is how fast it changes tone with the match.
+        - article [ref=e508]:
+          - generic [ref=e509]: M
+          - generic [ref=e510]: Malik Rowe
+          - generic [ref=e511]: Coach
+          - paragraph [ref=e512]: Students stayed for the endgames. That never happens by accident.
+        - article [ref=e513]:
+          - generic [ref=e514]: E
+          - generic [ref=e515]: Evan Park
+          - generic [ref=e516]: Broadcast engineer
+          - paragraph [ref=e517]: The visual states were clear enough for nontechnical staff.
+        - article [ref=e518]:
+          - generic [ref=e519]: I
+          - generic [ref=e520]: Iris Novak
+          - generic [ref=e521]: Community lead
+          - paragraph [ref=e522]: It made amateur games feel produced without pretending to be human.
+        - article [ref=e523]:
+          - generic [ref=e524]: M
+          - generic [ref=e525]: Mira Chen
+          - generic [ref=e526]: Tournament director
+          - paragraph [ref=e527]: Our rapid finals finally sounded as alive as the room felt.
+        - article [ref=e528]:
+          - generic [ref=e529]: J
+          - generic [ref=e530]: Jon Bell
+          - generic [ref=e531]: Chess streamer
+          - paragraph [ref=e532]: The chat went from quiet to quoting the commentator in two games.
+        - article [ref=e533]:
+          - generic [ref=e534]: A
+          - generic [ref=e535]: Amara Stone
+          - generic [ref=e536]: Club caster
+          - paragraph [ref=e537]: It catches plans early without drowning out the human host.
+        - article [ref=e538]:
+          - generic [ref=e539]: T
+          - generic [ref=e540]: Theo Ramos
+          - generic [ref=e541]: League producer
+          - paragraph [ref=e542]: We tested it as a filler track and kept it for the whole event.
+        - article [ref=e543]:
+          - generic [ref=e544]: "N"
+          - generic [ref=e545]: Nadia Ilyin
+          - generic [ref=e546]: Creator
+          - paragraph [ref=e547]: The best part is how fast it changes tone with the match.
+        - article [ref=e548]:
+          - generic [ref=e549]: M
+          - generic [ref=e550]: Malik Rowe
+          - generic [ref=e551]: Coach
+          - paragraph [ref=e552]: Students stayed for the endgames. That never happens by accident.
+        - article [ref=e553]:
+          - generic [ref=e554]: E
+          - generic [ref=e555]: Evan Park
+          - generic [ref=e556]: Broadcast engineer
+          - paragraph [ref=e557]: The visual states were clear enough for nontechnical staff.
+        - article [ref=e558]:
+          - generic [ref=e559]: I
+          - generic [ref=e560]: Iris Novak
+          - generic [ref=e561]: Community lead
+          - paragraph [ref=e562]: It made amateur games feel produced without pretending to be human.
+  - generic [ref=e564]:
+    - img [ref=e566]
+    - generic [ref=e568]:
+      - paragraph [ref=e571]: Final move. Crowd rising. Commentary locked.
+      - generic [ref=e572]: What are you waiting for
+      - generic [ref=e573]: join us now!
+    - img [ref=e575]
+  - generic [ref=e580]:
+    - generic [ref=e581]:
+      - paragraph [ref=e582]:
+        - img [ref=e583]
+        - text: FAQ
+      - heading "Short answers before the next build pass." [level=2] [ref=e587]
+    - generic [ref=e588]:
+      - generic [ref=e589]:
+        - heading "Can I replace the placeholder media?" [level=3] [ref=e590]:
+          - button "Can I replace the placeholder media?" [expanded] [ref=e591] [cursor=pointer]:
+            - text: Can I replace the placeholder media?
+            - img [ref=e592]
+        - region "Can I replace the placeholder media?" [ref=e594]:
+          - paragraph [ref=e595]: Yes. Drop matching video and audio filenames into the landing media folders later and the visual slots are already shaped for that workflow.
+      - heading "Does the page require the hook intro?" [level=3] [ref=e597]:
+        - button "Does the page require the hook intro?" [ref=e598] [cursor=pointer]:
+          - text: Does the page require the hook intro?
+          - img [ref=e599]
+      - heading "Is the navbar fixed?" [level=3] [ref=e602]:
+        - button "Is the navbar fixed?" [ref=e603] [cursor=pointer]:
+          - text: Is the navbar fixed?
+          - img [ref=e604]
+      - heading "Where does the 3D model come from?" [level=3] [ref=e607]:
+        - button "Where does the 3D model come from?" [ref=e608] [cursor=pointer]:
+          - text: Where does the 3D model come from?
+          - img [ref=e609]
+      - heading "Can this connect to signup now?" [level=3] [ref=e612]:
+        - button "Can this connect to signup now?" [ref=e613] [cursor=pointer]:
+          - text: Can this connect to signup now?
+          - img [ref=e614]
+      - heading "Is this mobile friendly?" [level=3] [ref=e617]:
+        - button "Is this mobile friendly?" [ref=e618] [cursor=pointer]:
+          - text: Is this mobile friendly?
+          - img [ref=e619]
+  - generic [ref=e622]:
+    - generic [ref=e624]: Elevate YOUR Experience
+    - generic [ref=e625]:
+      - paragraph [ref=e626]:
+        - generic [ref=e627]: Liquid Chess For
+        - text: Creators
+      - paragraph [ref=e628]:
+        - generic [ref=e629]: Liquid Chess For
+        - text: Leagues
+      - paragraph [ref=e630]:
+        - generic [ref=e631]: Liquid Chess For
+        - text: Clubs
+      - paragraph [ref=e632]:
+        - generic [ref=e633]: Liquid Chess For
+        - text: Streams
+    - generic [ref=e634]:
+      - generic [ref=e635]:
+        - link "Liquid Chess" [ref=e636] [cursor=pointer]:
+          - /url: "#hero"
+          - img [ref=e638]
+          - text: Liquid Chess
+        - paragraph [ref=e640]: AI commentary that makes every chess stream feel produced.
+      - generic [ref=e641]:
+        - heading "Product" [level=3] [ref=e642]
+        - link "Features" [ref=e643] [cursor=pointer]:
+          - /url: "#hero"
+        - link "Voices" [ref=e644] [cursor=pointer]:
+          - /url: "#hero"
+        - link "Demo" [ref=e645] [cursor=pointer]:
+          - /url: "#hero"
+        - link "Pricing" [ref=e646] [cursor=pointer]:
+          - /url: "#hero"
+      - generic [ref=e647]:
+        - heading "Company" [level=3] [ref=e648]
+        - link "About" [ref=e649] [cursor=pointer]:
+          - /url: "#hero"
+        - link "Contact" [ref=e650] [cursor=pointer]:
+          - /url: "#hero"
+        - link "Careers" [ref=e651] [cursor=pointer]:
+          - /url: "#hero"
+        - link "Press" [ref=e652] [cursor=pointer]:
+          - /url: "#hero"
+      - generic [ref=e653]:
+        - heading "Resources" [level=3] [ref=e654]
+        - link "Docs" [ref=e655] [cursor=pointer]:
+          - /url: "#hero"
+        - link "Brand" [ref=e656] [cursor=pointer]:
+          - /url: "#hero"
+        - link "Changelog" [ref=e657] [cursor=pointer]:
+          - /url: "#hero"
+        - link "Support" [ref=e658] [cursor=pointer]:
+          - /url: "#hero"
+      - generic [ref=e659]:
+        - heading "Social" [level=3] [ref=e660]
+        - generic [ref=e661]:
+          - link "Twitch" [ref=e662] [cursor=pointer]:
+            - /url: "#"
+            - img [ref=e663]
+          - link "Youtube" [ref=e665] [cursor=pointer]:
+            - /url: "#"
+            - img [ref=e666]
+          - link "Instagram" [ref=e669] [cursor=pointer]:
+            - /url: "#"
+            - img [ref=e670]
+          - link "Facebook" [ref=e673] [cursor=pointer]:
+            - /url: "#"
+            - img [ref=e674]

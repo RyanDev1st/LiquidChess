@@ -7,7 +7,7 @@ Assets:
 - Work with blenderMCP to determine each piece’s pivot directly in Blender.
 
 Hero behavior:
-- Start with both models exactly as they appear in the FBX, centered in the hero section.
+- Start with both models exactly as they appear in the FBX, centered in the hero section. The model and the texture are in `@src\design\desktop-web\components\hero-section\assets\models\chess pieces`
 - Add subtle idle animations for both pieces and their accessories.
 - On scroll down, separate the pieces:
 	- King moves left

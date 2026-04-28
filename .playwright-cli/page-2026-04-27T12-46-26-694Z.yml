@@ -1,0 +1,1239 @@
+- main "Liquid Chess landing page" [ref=e4]:
+  - navigation [ref=e6]:
+    - link "Liquid Chess" [ref=e7] [cursor=pointer]:
+      - /url: "#hero"
+      - img [ref=e9]
+      - generic [ref=e11]: Liquid Chess
+    - generic [ref=e12]:
+      - link "Features" [ref=e13] [cursor=pointer]:
+        - /url: "#hero"
+      - link "Voices" [ref=e14] [cursor=pointer]:
+        - /url: "#voices"
+      - link "Demo" [ref=e15] [cursor=pointer]:
+        - /url: "#demo"
+      - link "FAQ" [ref=e16] [cursor=pointer]:
+        - /url: "#faq"
+      - button "Sign In" [ref=e17]
+      - button "Get Started" [ref=e18]
+  - generic [ref=e19]:
+    - generic [ref=e20]:
+      - paragraph [ref=e21]: AI-powered chess commentary
+      - heading "Every match can sound like a finals broadcast." [level=1] [ref=e22]
+      - paragraph [ref=e23]: Liquid Chess turns positions, clocks, and chat energy into a live commentary layer built for streams.
+      - generic [ref=e24]:
+        - link "Watch demo" [ref=e25] [cursor=pointer]:
+          - /url: "#demo"
+        - link "Browse voices" [ref=e26] [cursor=pointer]:
+          - /url: "#voices"
+    - generic [ref=e27]:
+      - generic [ref=e28]:
+        - generic [ref=e29]:
+          - img [ref=e30]
+          - generic [ref=e32]: Queen trap
+        - generic [ref=e33]: Hover to preview
+      - generic [ref=e34]:
+        - generic [ref=e35]:
+          - img [ref=e36]
+          - generic [ref=e38]: Blitz save
+        - generic [ref=e39]: Hover to preview
+      - generic [ref=e40]:
+        - generic [ref=e41]:
+          - img [ref=e42]
+          - generic [ref=e44]: Endgame net
+        - generic [ref=e45]: Hover to preview
+      - generic [ref=e46]:
+        - generic [ref=e47]:
+          - img [ref=e48]
+          - generic [ref=e50]: Caster cam
+        - generic [ref=e51]: Hover to preview
+      - generic [ref=e52]:
+        - generic [ref=e53]:
+          - img [ref=e54]
+          - generic [ref=e56]: Rook lift
+        - generic [ref=e57]: Hover to preview
+      - generic [ref=e58]:
+        - generic [ref=e59]:
+          - img [ref=e60]
+          - generic [ref=e62]: Mate threat
+        - generic [ref=e63]: Hover to preview
+  - generic [ref=e65]:
+    - generic [ref=e66]:
+      - heading "Trusted by leagues, casters, creators" [level=1] [ref=e68]
+      - region [ref=e71]:
+        - generic [ref=e73]:
+          - group [ref=e74]:
+            - generic [ref=e76]: FIDE
+          - group [ref=e77]:
+            - generic [ref=e79]: Twitch
+          - group [ref=e80]:
+            - generic [ref=e82]: OBS
+          - group [ref=e83]:
+            - generic [ref=e85]: Chess.com
+          - group [ref=e86]:
+            - generic [ref=e88]: Lichess
+          - group [ref=e89]:
+            - generic [ref=e91]: Creators
+          - group [ref=e92]:
+            - generic [ref=e94]: Rapid League
+          - group [ref=e95]:
+            - generic [ref=e97]: Arena
+    - generic [ref=e100]:
+      - paragraph [ref=e101]: Voice showcase
+      - heading "Pick the room. Liquid Chess finds the voice." [level=2] [ref=e102]
+    - generic [ref=e108]:
+      - button "Grandmaster Pulse" [ref=e109] [cursor=pointer]:
+        - img "Grandmaster Pulse" [ref=e110]
+        - generic [ref=e111]: Grandmaster Pulse
+      - button "Blitz Arena" [ref=e112] [cursor=pointer]:
+        - img "Blitz Arena" [ref=e113]
+        - generic [ref=e114]: Blitz Arena
+      - button "Coach Lens" [ref=e115] [cursor=pointer]:
+        - img "Coach Lens" [ref=e116]
+        - generic [ref=e117]: Coach Lens
+      - button "Endgame Velvet" [ref=e118] [cursor=pointer]:
+        - img "Endgame Velvet" [ref=e119]
+        - generic [ref=e120]: Endgame Velvet
+      - button "Crowd Reactor" [ref=e121] [cursor=pointer]:
+        - img "Crowd Reactor" [ref=e122]
+        - generic [ref=e123]: Crowd Reactor
+      - button "Opening Lab" [ref=e124] [cursor=pointer]:
+        - img "Opening Lab" [ref=e125]
+        - generic [ref=e126]: Opening Lab
+      - button "Rapid Recap" [ref=e127] [cursor=pointer]:
+        - img "Rapid Recap" [ref=e128]
+        - generic [ref=e129]: Rapid Recap
+      - button "League Desk" [ref=e130] [cursor=pointer]:
+        - img "League Desk" [ref=e131]
+        - generic [ref=e132]: League Desk
+      - button "Silent Mode" [ref=e133] [cursor=pointer]:
+        - img "Silent Mode" [ref=e134]
+        - generic [ref=e135]: Silent Mode
+  - generic [ref=e138]:
+    - generic [ref=e140]:
+      - paragraph [ref=e141]: Live control demo
+      - heading "One keyboard tap changes the broadcast." [level=2] [ref=e142]
+    - generic [ref=e145]:
+      - button "Ctrl C" [ref=e150] [cursor=pointer]:
+        - generic [ref=e151]: Ctrl
+        - generic [ref=e152]: C
+      - img [ref=e153]
+      - generic [ref=e156]:
+        - img "Muted commentator state" [ref=e157]
+        - img "Live commentator state" [ref=e158]
+      - complementary [ref=e161]:
+        - generic [ref=e162]:
+          - strong [ref=e163]: LIVE CHAT
+          - img [ref=e164]
+        - generic [ref=e168]:
+          - paragraph [ref=e169]:
+            - generic [ref=e170]: viewer_1
+            - text: quiet opening
+          - paragraph [ref=e171]:
+            - generic [ref=e172]: viewer_2
+            - text: small edge
+          - paragraph [ref=e173]:
+            - generic [ref=e174]: viewer_3
+            - text: clock check
+          - paragraph [ref=e175]:
+            - generic [ref=e176]: viewer_4
+            - text: developing
+  - generic [ref=e182]:
+    - generic [ref=e183]:
+      - paragraph [ref=e184]: Proof from the booth
+      - heading "Built for the moments viewers repeat back." [level=2] [ref=e185]
+    - generic [ref=e187]:
+      - marquee [ref=e188]:
+        - generic [ref=e189]:
+          - generic [ref=e191]:
+            - generic [ref=e192]:
+              - img "Ava Green" [ref=e194]
+              - generic [ref=e195]:
+                - generic [ref=e196]:
+                  - text: Ava Green
+                  - generic [ref=e197]: AU
+                - paragraph [ref=e198]: "@ava"
+            - blockquote [ref=e199]: Liquid Chess made our finals feel alive.
+          - generic [ref=e201]:
+            - generic [ref=e202]:
+              - img "Ana Miller" [ref=e204]
+              - generic [ref=e205]:
+                - generic [ref=e206]:
+                  - text: Ana Miller
+                  - generic [ref=e207]: DE
+                - paragraph [ref=e208]: "@ana"
+            - blockquote [ref=e209]: The voice cards are exactly what our stream needed.
+          - generic [ref=e211]:
+            - generic [ref=e212]:
+              - img "Mateo Rossi" [ref=e214]
+              - generic [ref=e215]:
+                - generic [ref=e216]:
+                  - text: Mateo Rossi
+                  - generic [ref=e217]: IT
+                - paragraph [ref=e218]: "@mat"
+            - blockquote [ref=e219]: Chat reacted as soon as the AI cast kicked in.
+          - generic [ref=e221]:
+            - generic [ref=e222]:
+              - img "Maya Patel" [ref=e224]
+              - generic [ref=e225]:
+                - generic [ref=e226]:
+                  - text: Maya Patel
+                  - generic [ref=e227]: IN
+                - paragraph [ref=e228]: "@maya"
+            - blockquote [ref=e229]: Endgames finally held audience attention.
+          - generic [ref=e231]:
+            - generic [ref=e232]:
+              - img "Noah Smith" [ref=e234]
+              - generic [ref=e235]:
+                - generic [ref=e236]:
+                  - text: Noah Smith
+                  - generic [ref=e237]: US
+                - paragraph [ref=e238]: "@noah"
+            - blockquote [ref=e239]: The commentary layer feels broadcast-ready.
+          - generic [ref=e241]:
+            - generic [ref=e242]:
+              - img "Lucas Stone" [ref=e244]
+              - generic [ref=e245]:
+                - generic [ref=e246]:
+                  - text: Lucas Stone
+                  - generic [ref=e247]: FR
+                - paragraph [ref=e248]: "@luc"
+            - blockquote [ref=e249]: Easy to picture this in every club event.
+          - generic [ref=e251]:
+            - generic [ref=e252]:
+              - img "Haruto Sato" [ref=e254]
+              - generic [ref=e255]:
+                - generic [ref=e256]:
+                  - text: Haruto Sato
+                  - generic [ref=e257]: JP
+                - paragraph [ref=e258]: "@haru"
+            - blockquote [ref=e259]: The pacing worked even on mobile viewers.
+          - generic [ref=e261]:
+            - generic [ref=e262]:
+              - img "Emma Lee" [ref=e264]
+              - generic [ref=e265]:
+                - generic [ref=e266]:
+                  - text: Emma Lee
+                  - generic [ref=e267]: CA
+                - paragraph [ref=e268]: "@emma"
+            - blockquote [ref=e269]: Caster mode gave our stream an identity.
+          - generic [ref=e271]:
+            - generic [ref=e272]:
+              - img "Carlos Ray" [ref=e274]
+              - generic [ref=e275]:
+                - generic [ref=e276]:
+                  - text: Carlos Ray
+                  - generic [ref=e277]: ES
+                - paragraph [ref=e278]: "@carl"
+            - blockquote [ref=e279]: This is the missing energy for amateur chess.
+        - generic [ref=e280]:
+          - generic [ref=e282]:
+            - generic [ref=e283]:
+              - img "Ava Green" [ref=e285]
+              - generic [ref=e286]:
+                - generic [ref=e287]:
+                  - text: Ava Green
+                  - generic [ref=e288]: AU
+                - paragraph [ref=e289]: "@ava"
+            - blockquote [ref=e290]: Liquid Chess made our finals feel alive.
+          - generic [ref=e292]:
+            - generic [ref=e293]:
+              - img "Ana Miller" [ref=e295]
+              - generic [ref=e296]:
+                - generic [ref=e297]:
+                  - text: Ana Miller
+                  - generic [ref=e298]: DE
+                - paragraph [ref=e299]: "@ana"
+            - blockquote [ref=e300]: The voice cards are exactly what our stream needed.
+          - generic [ref=e302]:
+            - generic [ref=e303]:
+              - img "Mateo Rossi" [ref=e305]
+              - generic [ref=e306]:
+                - generic [ref=e307]:
+                  - text: Mateo Rossi
+                  - generic [ref=e308]: IT
+                - paragraph [ref=e309]: "@mat"
+            - blockquote [ref=e310]: Chat reacted as soon as the AI cast kicked in.
+          - generic [ref=e312]:
+            - generic [ref=e313]:
+              - img "Maya Patel" [ref=e315]
+              - generic [ref=e316]:
+                - generic [ref=e317]:
+                  - text: Maya Patel
+                  - generic [ref=e318]: IN
+                - paragraph [ref=e319]: "@maya"
+            - blockquote [ref=e320]: Endgames finally held audience attention.
+          - generic [ref=e322]:
+            - generic [ref=e323]:
+              - img "Noah Smith" [ref=e325]
+              - generic [ref=e326]:
+                - generic [ref=e327]:
+                  - text: Noah Smith
+                  - generic [ref=e328]: US
+                - paragraph [ref=e329]: "@noah"
+            - blockquote [ref=e330]: The commentary layer feels broadcast-ready.
+          - generic [ref=e332]:
+            - generic [ref=e333]:
+              - img "Lucas Stone" [ref=e335]
+              - generic [ref=e336]:
+                - generic [ref=e337]:
+                  - text: Lucas Stone
+                  - generic [ref=e338]: FR
+                - paragraph [ref=e339]: "@luc"
+            - blockquote [ref=e340]: Easy to picture this in every club event.
+          - generic [ref=e342]:
+            - generic [ref=e343]:
+              - img "Haruto Sato" [ref=e345]
+              - generic [ref=e346]:
+                - generic [ref=e347]:
+                  - text: Haruto Sato
+                  - generic [ref=e348]: JP
+                - paragraph [ref=e349]: "@haru"
+            - blockquote [ref=e350]: The pacing worked even on mobile viewers.
+          - generic [ref=e352]:
+            - generic [ref=e353]:
+              - img "Emma Lee" [ref=e355]
+              - generic [ref=e356]:
+                - generic [ref=e357]:
+                  - text: Emma Lee
+                  - generic [ref=e358]: CA
+                - paragraph [ref=e359]: "@emma"
+            - blockquote [ref=e360]: Caster mode gave our stream an identity.
+          - generic [ref=e362]:
+            - generic [ref=e363]:
+              - img "Carlos Ray" [ref=e365]
+              - generic [ref=e366]:
+                - generic [ref=e367]:
+                  - text: Carlos Ray
+                  - generic [ref=e368]: ES
+                - paragraph [ref=e369]: "@carl"
+            - blockquote [ref=e370]: This is the missing energy for amateur chess.
+        - generic [ref=e371]:
+          - generic [ref=e373]:
+            - generic [ref=e374]:
+              - img "Ava Green" [ref=e376]
+              - generic [ref=e377]:
+                - generic [ref=e378]:
+                  - text: Ava Green
+                  - generic [ref=e379]: AU
+                - paragraph [ref=e380]: "@ava"
+            - blockquote [ref=e381]: Liquid Chess made our finals feel alive.
+          - generic [ref=e383]:
+            - generic [ref=e384]:
+              - img "Ana Miller" [ref=e386]
+              - generic [ref=e387]:
+                - generic [ref=e388]:
+                  - text: Ana Miller
+                  - generic [ref=e389]: DE
+                - paragraph [ref=e390]: "@ana"
+            - blockquote [ref=e391]: The voice cards are exactly what our stream needed.
+          - generic [ref=e393]:
+            - generic [ref=e394]:
+              - img "Mateo Rossi" [ref=e396]
+              - generic [ref=e397]:
+                - generic [ref=e398]:
+                  - text: Mateo Rossi
+                  - generic [ref=e399]: IT
+                - paragraph [ref=e400]: "@mat"
+            - blockquote [ref=e401]: Chat reacted as soon as the AI cast kicked in.
+          - generic [ref=e403]:
+            - generic [ref=e404]:
+              - img "Maya Patel" [ref=e406]
+              - generic [ref=e407]:
+                - generic [ref=e408]:
+                  - text: Maya Patel
+                  - generic [ref=e409]: IN
+                - paragraph [ref=e410]: "@maya"
+            - blockquote [ref=e411]: Endgames finally held audience attention.
+          - generic [ref=e413]:
+            - generic [ref=e414]:
+              - img "Noah Smith" [ref=e416]
+              - generic [ref=e417]:
+                - generic [ref=e418]:
+                  - text: Noah Smith
+                  - generic [ref=e419]: US
+                - paragraph [ref=e420]: "@noah"
+            - blockquote [ref=e421]: The commentary layer feels broadcast-ready.
+          - generic [ref=e423]:
+            - generic [ref=e424]:
+              - img "Lucas Stone" [ref=e426]
+              - generic [ref=e427]:
+                - generic [ref=e428]:
+                  - text: Lucas Stone
+                  - generic [ref=e429]: FR
+                - paragraph [ref=e430]: "@luc"
+            - blockquote [ref=e431]: Easy to picture this in every club event.
+          - generic [ref=e433]:
+            - generic [ref=e434]:
+              - img "Haruto Sato" [ref=e436]
+              - generic [ref=e437]:
+                - generic [ref=e438]:
+                  - text: Haruto Sato
+                  - generic [ref=e439]: JP
+                - paragraph [ref=e440]: "@haru"
+            - blockquote [ref=e441]: The pacing worked even on mobile viewers.
+          - generic [ref=e443]:
+            - generic [ref=e444]:
+              - img "Emma Lee" [ref=e446]
+              - generic [ref=e447]:
+                - generic [ref=e448]:
+                  - text: Emma Lee
+                  - generic [ref=e449]: CA
+                - paragraph [ref=e450]: "@emma"
+            - blockquote [ref=e451]: Caster mode gave our stream an identity.
+          - generic [ref=e453]:
+            - generic [ref=e454]:
+              - img "Carlos Ray" [ref=e456]
+              - generic [ref=e457]:
+                - generic [ref=e458]:
+                  - text: Carlos Ray
+                  - generic [ref=e459]: ES
+                - paragraph [ref=e460]: "@carl"
+            - blockquote [ref=e461]: This is the missing energy for amateur chess.
+      - marquee [ref=e462]:
+        - generic [ref=e463]:
+          - generic [ref=e465]:
+            - generic [ref=e466]:
+              - img "Ava Green" [ref=e468]
+              - generic [ref=e469]:
+                - generic [ref=e470]:
+                  - text: Ava Green
+                  - generic [ref=e471]: AU
+                - paragraph [ref=e472]: "@ava"
+            - blockquote [ref=e473]: Liquid Chess made our finals feel alive.
+          - generic [ref=e475]:
+            - generic [ref=e476]:
+              - img "Ana Miller" [ref=e478]
+              - generic [ref=e479]:
+                - generic [ref=e480]:
+                  - text: Ana Miller
+                  - generic [ref=e481]: DE
+                - paragraph [ref=e482]: "@ana"
+            - blockquote [ref=e483]: The voice cards are exactly what our stream needed.
+          - generic [ref=e485]:
+            - generic [ref=e486]:
+              - img "Mateo Rossi" [ref=e488]
+              - generic [ref=e489]:
+                - generic [ref=e490]:
+                  - text: Mateo Rossi
+                  - generic [ref=e491]: IT
+                - paragraph [ref=e492]: "@mat"
+            - blockquote [ref=e493]: Chat reacted as soon as the AI cast kicked in.
+          - generic [ref=e495]:
+            - generic [ref=e496]:
+              - img "Maya Patel" [ref=e498]
+              - generic [ref=e499]:
+                - generic [ref=e500]:
+                  - text: Maya Patel
+                  - generic [ref=e501]: IN
+                - paragraph [ref=e502]: "@maya"
+            - blockquote [ref=e503]: Endgames finally held audience attention.
+          - generic [ref=e505]:
+            - generic [ref=e506]:
+              - img "Noah Smith" [ref=e508]
+              - generic [ref=e509]:
+                - generic [ref=e510]:
+                  - text: Noah Smith
+                  - generic [ref=e511]: US
+                - paragraph [ref=e512]: "@noah"
+            - blockquote [ref=e513]: The commentary layer feels broadcast-ready.
+          - generic [ref=e515]:
+            - generic [ref=e516]:
+              - img "Lucas Stone" [ref=e518]
+              - generic [ref=e519]:
+                - generic [ref=e520]:
+                  - text: Lucas Stone
+                  - generic [ref=e521]: FR
+                - paragraph [ref=e522]: "@luc"
+            - blockquote [ref=e523]: Easy to picture this in every club event.
+          - generic [ref=e525]:
+            - generic [ref=e526]:
+              - img "Haruto Sato" [ref=e528]
+              - generic [ref=e529]:
+                - generic [ref=e530]:
+                  - text: Haruto Sato
+                  - generic [ref=e531]: JP
+                - paragraph [ref=e532]: "@haru"
+            - blockquote [ref=e533]: The pacing worked even on mobile viewers.
+          - generic [ref=e535]:
+            - generic [ref=e536]:
+              - img "Emma Lee" [ref=e538]
+              - generic [ref=e539]:
+                - generic [ref=e540]:
+                  - text: Emma Lee
+                  - generic [ref=e541]: CA
+                - paragraph [ref=e542]: "@emma"
+            - blockquote [ref=e543]: Caster mode gave our stream an identity.
+          - generic [ref=e545]:
+            - generic [ref=e546]:
+              - img "Carlos Ray" [ref=e548]
+              - generic [ref=e549]:
+                - generic [ref=e550]:
+                  - text: Carlos Ray
+                  - generic [ref=e551]: ES
+                - paragraph [ref=e552]: "@carl"
+            - blockquote [ref=e553]: This is the missing energy for amateur chess.
+        - generic [ref=e554]:
+          - generic [ref=e556]:
+            - generic [ref=e557]:
+              - img "Ava Green" [ref=e559]
+              - generic [ref=e560]:
+                - generic [ref=e561]:
+                  - text: Ava Green
+                  - generic [ref=e562]: AU
+                - paragraph [ref=e563]: "@ava"
+            - blockquote [ref=e564]: Liquid Chess made our finals feel alive.
+          - generic [ref=e566]:
+            - generic [ref=e567]:
+              - img "Ana Miller" [ref=e569]
+              - generic [ref=e570]:
+                - generic [ref=e571]:
+                  - text: Ana Miller
+                  - generic [ref=e572]: DE
+                - paragraph [ref=e573]: "@ana"
+            - blockquote [ref=e574]: The voice cards are exactly what our stream needed.
+          - generic [ref=e576]:
+            - generic [ref=e577]:
+              - img "Mateo Rossi" [ref=e579]
+              - generic [ref=e580]:
+                - generic [ref=e581]:
+                  - text: Mateo Rossi
+                  - generic [ref=e582]: IT
+                - paragraph [ref=e583]: "@mat"
+            - blockquote [ref=e584]: Chat reacted as soon as the AI cast kicked in.
+          - generic [ref=e586]:
+            - generic [ref=e587]:
+              - img "Maya Patel" [ref=e589]
+              - generic [ref=e590]:
+                - generic [ref=e591]:
+                  - text: Maya Patel
+                  - generic [ref=e592]: IN
+                - paragraph [ref=e593]: "@maya"
+            - blockquote [ref=e594]: Endgames finally held audience attention.
+          - generic [ref=e596]:
+            - generic [ref=e597]:
+              - img "Noah Smith" [ref=e599]
+              - generic [ref=e600]:
+                - generic [ref=e601]:
+                  - text: Noah Smith
+                  - generic [ref=e602]: US
+                - paragraph [ref=e603]: "@noah"
+            - blockquote [ref=e604]: The commentary layer feels broadcast-ready.
+          - generic [ref=e606]:
+            - generic [ref=e607]:
+              - img "Lucas Stone" [ref=e609]
+              - generic [ref=e610]:
+                - generic [ref=e611]:
+                  - text: Lucas Stone
+                  - generic [ref=e612]: FR
+                - paragraph [ref=e613]: "@luc"
+            - blockquote [ref=e614]: Easy to picture this in every club event.
+          - generic [ref=e616]:
+            - generic [ref=e617]:
+              - img "Haruto Sato" [ref=e619]
+              - generic [ref=e620]:
+                - generic [ref=e621]:
+                  - text: Haruto Sato
+                  - generic [ref=e622]: JP
+                - paragraph [ref=e623]: "@haru"
+            - blockquote [ref=e624]: The pacing worked even on mobile viewers.
+          - generic [ref=e626]:
+            - generic [ref=e627]:
+              - img "Emma Lee" [ref=e629]
+              - generic [ref=e630]:
+                - generic [ref=e631]:
+                  - text: Emma Lee
+                  - generic [ref=e632]: CA
+                - paragraph [ref=e633]: "@emma"
+            - blockquote [ref=e634]: Caster mode gave our stream an identity.
+          - generic [ref=e636]:
+            - generic [ref=e637]:
+              - img "Carlos Ray" [ref=e639]
+              - generic [ref=e640]:
+                - generic [ref=e641]:
+                  - text: Carlos Ray
+                  - generic [ref=e642]: ES
+                - paragraph [ref=e643]: "@carl"
+            - blockquote [ref=e644]: This is the missing energy for amateur chess.
+        - generic [ref=e645]:
+          - generic [ref=e647]:
+            - generic [ref=e648]:
+              - img "Ava Green" [ref=e650]
+              - generic [ref=e651]:
+                - generic [ref=e652]:
+                  - text: Ava Green
+                  - generic [ref=e653]: AU
+                - paragraph [ref=e654]: "@ava"
+            - blockquote [ref=e655]: Liquid Chess made our finals feel alive.
+          - generic [ref=e657]:
+            - generic [ref=e658]:
+              - img "Ana Miller" [ref=e660]
+              - generic [ref=e661]:
+                - generic [ref=e662]:
+                  - text: Ana Miller
+                  - generic [ref=e663]: DE
+                - paragraph [ref=e664]: "@ana"
+            - blockquote [ref=e665]: The voice cards are exactly what our stream needed.
+          - generic [ref=e667]:
+            - generic [ref=e668]:
+              - img "Mateo Rossi" [ref=e670]
+              - generic [ref=e671]:
+                - generic [ref=e672]:
+                  - text: Mateo Rossi
+                  - generic [ref=e673]: IT
+                - paragraph [ref=e674]: "@mat"
+            - blockquote [ref=e675]: Chat reacted as soon as the AI cast kicked in.
+          - generic [ref=e677]:
+            - generic [ref=e678]:
+              - img "Maya Patel" [ref=e680]
+              - generic [ref=e681]:
+                - generic [ref=e682]:
+                  - text: Maya Patel
+                  - generic [ref=e683]: IN
+                - paragraph [ref=e684]: "@maya"
+            - blockquote [ref=e685]: Endgames finally held audience attention.
+          - generic [ref=e687]:
+            - generic [ref=e688]:
+              - img "Noah Smith" [ref=e690]
+              - generic [ref=e691]:
+                - generic [ref=e692]:
+                  - text: Noah Smith
+                  - generic [ref=e693]: US
+                - paragraph [ref=e694]: "@noah"
+            - blockquote [ref=e695]: The commentary layer feels broadcast-ready.
+          - generic [ref=e697]:
+            - generic [ref=e698]:
+              - img "Lucas Stone" [ref=e700]
+              - generic [ref=e701]:
+                - generic [ref=e702]:
+                  - text: Lucas Stone
+                  - generic [ref=e703]: FR
+                - paragraph [ref=e704]: "@luc"
+            - blockquote [ref=e705]: Easy to picture this in every club event.
+          - generic [ref=e707]:
+            - generic [ref=e708]:
+              - img "Haruto Sato" [ref=e710]
+              - generic [ref=e711]:
+                - generic [ref=e712]:
+                  - text: Haruto Sato
+                  - generic [ref=e713]: JP
+                - paragraph [ref=e714]: "@haru"
+            - blockquote [ref=e715]: The pacing worked even on mobile viewers.
+          - generic [ref=e717]:
+            - generic [ref=e718]:
+              - img "Emma Lee" [ref=e720]
+              - generic [ref=e721]:
+                - generic [ref=e722]:
+                  - text: Emma Lee
+                  - generic [ref=e723]: CA
+                - paragraph [ref=e724]: "@emma"
+            - blockquote [ref=e725]: Caster mode gave our stream an identity.
+          - generic [ref=e727]:
+            - generic [ref=e728]:
+              - img "Carlos Ray" [ref=e730]
+              - generic [ref=e731]:
+                - generic [ref=e732]:
+                  - text: Carlos Ray
+                  - generic [ref=e733]: ES
+                - paragraph [ref=e734]: "@carl"
+            - blockquote [ref=e735]: This is the missing energy for amateur chess.
+      - marquee [ref=e736]:
+        - generic [ref=e737]:
+          - generic [ref=e739]:
+            - generic [ref=e740]:
+              - img "Ava Green" [ref=e742]
+              - generic [ref=e743]:
+                - generic [ref=e744]:
+                  - text: Ava Green
+                  - generic [ref=e745]: AU
+                - paragraph [ref=e746]: "@ava"
+            - blockquote [ref=e747]: Liquid Chess made our finals feel alive.
+          - generic [ref=e749]:
+            - generic [ref=e750]:
+              - img "Ana Miller" [ref=e752]
+              - generic [ref=e753]:
+                - generic [ref=e754]:
+                  - text: Ana Miller
+                  - generic [ref=e755]: DE
+                - paragraph [ref=e756]: "@ana"
+            - blockquote [ref=e757]: The voice cards are exactly what our stream needed.
+          - generic [ref=e759]:
+            - generic [ref=e760]:
+              - img "Mateo Rossi" [ref=e762]
+              - generic [ref=e763]:
+                - generic [ref=e764]:
+                  - text: Mateo Rossi
+                  - generic [ref=e765]: IT
+                - paragraph [ref=e766]: "@mat"
+            - blockquote [ref=e767]: Chat reacted as soon as the AI cast kicked in.
+          - generic [ref=e769]:
+            - generic [ref=e770]:
+              - img "Maya Patel" [ref=e772]
+              - generic [ref=e773]:
+                - generic [ref=e774]:
+                  - text: Maya Patel
+                  - generic [ref=e775]: IN
+                - paragraph [ref=e776]: "@maya"
+            - blockquote [ref=e777]: Endgames finally held audience attention.
+          - generic [ref=e779]:
+            - generic [ref=e780]:
+              - img "Noah Smith" [ref=e782]
+              - generic [ref=e783]:
+                - generic [ref=e784]:
+                  - text: Noah Smith
+                  - generic [ref=e785]: US
+                - paragraph [ref=e786]: "@noah"
+            - blockquote [ref=e787]: The commentary layer feels broadcast-ready.
+          - generic [ref=e789]:
+            - generic [ref=e790]:
+              - img "Lucas Stone" [ref=e792]
+              - generic [ref=e793]:
+                - generic [ref=e794]:
+                  - text: Lucas Stone
+                  - generic [ref=e795]: FR
+                - paragraph [ref=e796]: "@luc"
+            - blockquote [ref=e797]: Easy to picture this in every club event.
+          - generic [ref=e799]:
+            - generic [ref=e800]:
+              - img "Haruto Sato" [ref=e802]
+              - generic [ref=e803]:
+                - generic [ref=e804]:
+                  - text: Haruto Sato
+                  - generic [ref=e805]: JP
+                - paragraph [ref=e806]: "@haru"
+            - blockquote [ref=e807]: The pacing worked even on mobile viewers.
+          - generic [ref=e809]:
+            - generic [ref=e810]:
+              - img "Emma Lee" [ref=e812]
+              - generic [ref=e813]:
+                - generic [ref=e814]:
+                  - text: Emma Lee
+                  - generic [ref=e815]: CA
+                - paragraph [ref=e816]: "@emma"
+            - blockquote [ref=e817]: Caster mode gave our stream an identity.
+          - generic [ref=e819]:
+            - generic [ref=e820]:
+              - img "Carlos Ray" [ref=e822]
+              - generic [ref=e823]:
+                - generic [ref=e824]:
+                  - text: Carlos Ray
+                  - generic [ref=e825]: ES
+                - paragraph [ref=e826]: "@carl"
+            - blockquote [ref=e827]: This is the missing energy for amateur chess.
+        - generic [ref=e828]:
+          - generic [ref=e830]:
+            - generic [ref=e831]:
+              - img "Ava Green" [ref=e833]
+              - generic [ref=e834]:
+                - generic [ref=e835]:
+                  - text: Ava Green
+                  - generic [ref=e836]: AU
+                - paragraph [ref=e837]: "@ava"
+            - blockquote [ref=e838]: Liquid Chess made our finals feel alive.
+          - generic [ref=e840]:
+            - generic [ref=e841]:
+              - img "Ana Miller" [ref=e843]
+              - generic [ref=e844]:
+                - generic [ref=e845]:
+                  - text: Ana Miller
+                  - generic [ref=e846]: DE
+                - paragraph [ref=e847]: "@ana"
+            - blockquote [ref=e848]: The voice cards are exactly what our stream needed.
+          - generic [ref=e850]:
+            - generic [ref=e851]:
+              - img "Mateo Rossi" [ref=e853]
+              - generic [ref=e854]:
+                - generic [ref=e855]:
+                  - text: Mateo Rossi
+                  - generic [ref=e856]: IT
+                - paragraph [ref=e857]: "@mat"
+            - blockquote [ref=e858]: Chat reacted as soon as the AI cast kicked in.
+          - generic [ref=e860]:
+            - generic [ref=e861]:
+              - img "Maya Patel" [ref=e863]
+              - generic [ref=e864]:
+                - generic [ref=e865]:
+                  - text: Maya Patel
+                  - generic [ref=e866]: IN
+                - paragraph [ref=e867]: "@maya"
+            - blockquote [ref=e868]: Endgames finally held audience attention.
+          - generic [ref=e870]:
+            - generic [ref=e871]:
+              - img "Noah Smith" [ref=e873]
+              - generic [ref=e874]:
+                - generic [ref=e875]:
+                  - text: Noah Smith
+                  - generic [ref=e876]: US
+                - paragraph [ref=e877]: "@noah"
+            - blockquote [ref=e878]: The commentary layer feels broadcast-ready.
+          - generic [ref=e880]:
+            - generic [ref=e881]:
+              - img "Lucas Stone" [ref=e883]
+              - generic [ref=e884]:
+                - generic [ref=e885]:
+                  - text: Lucas Stone
+                  - generic [ref=e886]: FR
+                - paragraph [ref=e887]: "@luc"
+            - blockquote [ref=e888]: Easy to picture this in every club event.
+          - generic [ref=e890]:
+            - generic [ref=e891]:
+              - img "Haruto Sato" [ref=e893]
+              - generic [ref=e894]:
+                - generic [ref=e895]:
+                  - text: Haruto Sato
+                  - generic [ref=e896]: JP
+                - paragraph [ref=e897]: "@haru"
+            - blockquote [ref=e898]: The pacing worked even on mobile viewers.
+          - generic [ref=e900]:
+            - generic [ref=e901]:
+              - img "Emma Lee" [ref=e903]
+              - generic [ref=e904]:
+                - generic [ref=e905]:
+                  - text: Emma Lee
+                  - generic [ref=e906]: CA
+                - paragraph [ref=e907]: "@emma"
+            - blockquote [ref=e908]: Caster mode gave our stream an identity.
+          - generic [ref=e910]:
+            - generic [ref=e911]:
+              - img "Carlos Ray" [ref=e913]
+              - generic [ref=e914]:
+                - generic [ref=e915]:
+                  - text: Carlos Ray
+                  - generic [ref=e916]: ES
+                - paragraph [ref=e917]: "@carl"
+            - blockquote [ref=e918]: This is the missing energy for amateur chess.
+        - generic [ref=e919]:
+          - generic [ref=e921]:
+            - generic [ref=e922]:
+              - img "Ava Green" [ref=e924]
+              - generic [ref=e925]:
+                - generic [ref=e926]:
+                  - text: Ava Green
+                  - generic [ref=e927]: AU
+                - paragraph [ref=e928]: "@ava"
+            - blockquote [ref=e929]: Liquid Chess made our finals feel alive.
+          - generic [ref=e931]:
+            - generic [ref=e932]:
+              - img "Ana Miller" [ref=e934]
+              - generic [ref=e935]:
+                - generic [ref=e936]:
+                  - text: Ana Miller
+                  - generic [ref=e937]: DE
+                - paragraph [ref=e938]: "@ana"
+            - blockquote [ref=e939]: The voice cards are exactly what our stream needed.
+          - generic [ref=e941]:
+            - generic [ref=e942]:
+              - img "Mateo Rossi" [ref=e944]
+              - generic [ref=e945]:
+                - generic [ref=e946]:
+                  - text: Mateo Rossi
+                  - generic [ref=e947]: IT
+                - paragraph [ref=e948]: "@mat"
+            - blockquote [ref=e949]: Chat reacted as soon as the AI cast kicked in.
+          - generic [ref=e951]:
+            - generic [ref=e952]:
+              - img "Maya Patel" [ref=e954]
+              - generic [ref=e955]:
+                - generic [ref=e956]:
+                  - text: Maya Patel
+                  - generic [ref=e957]: IN
+                - paragraph [ref=e958]: "@maya"
+            - blockquote [ref=e959]: Endgames finally held audience attention.
+          - generic [ref=e961]:
+            - generic [ref=e962]:
+              - img "Noah Smith" [ref=e964]
+              - generic [ref=e965]:
+                - generic [ref=e966]:
+                  - text: Noah Smith
+                  - generic [ref=e967]: US
+                - paragraph [ref=e968]: "@noah"
+            - blockquote [ref=e969]: The commentary layer feels broadcast-ready.
+          - generic [ref=e971]:
+            - generic [ref=e972]:
+              - img "Lucas Stone" [ref=e974]
+              - generic [ref=e975]:
+                - generic [ref=e976]:
+                  - text: Lucas Stone
+                  - generic [ref=e977]: FR
+                - paragraph [ref=e978]: "@luc"
+            - blockquote [ref=e979]: Easy to picture this in every club event.
+          - generic [ref=e981]:
+            - generic [ref=e982]:
+              - img "Haruto Sato" [ref=e984]
+              - generic [ref=e985]:
+                - generic [ref=e986]:
+                  - text: Haruto Sato
+                  - generic [ref=e987]: JP
+                - paragraph [ref=e988]: "@haru"
+            - blockquote [ref=e989]: The pacing worked even on mobile viewers.
+          - generic [ref=e991]:
+            - generic [ref=e992]:
+              - img "Emma Lee" [ref=e994]
+              - generic [ref=e995]:
+                - generic [ref=e996]:
+                  - text: Emma Lee
+                  - generic [ref=e997]: CA
+                - paragraph [ref=e998]: "@emma"
+            - blockquote [ref=e999]: Caster mode gave our stream an identity.
+          - generic [ref=e1001]:
+            - generic [ref=e1002]:
+              - img "Carlos Ray" [ref=e1004]
+              - generic [ref=e1005]:
+                - generic [ref=e1006]:
+                  - text: Carlos Ray
+                  - generic [ref=e1007]: ES
+                - paragraph [ref=e1008]: "@carl"
+            - blockquote [ref=e1009]: This is the missing energy for amateur chess.
+      - marquee [ref=e1010]:
+        - generic [ref=e1011]:
+          - generic [ref=e1013]:
+            - generic [ref=e1014]:
+              - img "Ava Green" [ref=e1016]
+              - generic [ref=e1017]:
+                - generic [ref=e1018]:
+                  - text: Ava Green
+                  - generic [ref=e1019]: AU
+                - paragraph [ref=e1020]: "@ava"
+            - blockquote [ref=e1021]: Liquid Chess made our finals feel alive.
+          - generic [ref=e1023]:
+            - generic [ref=e1024]:
+              - img "Ana Miller" [ref=e1026]
+              - generic [ref=e1027]:
+                - generic [ref=e1028]:
+                  - text: Ana Miller
+                  - generic [ref=e1029]: DE
+                - paragraph [ref=e1030]: "@ana"
+            - blockquote [ref=e1031]: The voice cards are exactly what our stream needed.
+          - generic [ref=e1033]:
+            - generic [ref=e1034]:
+              - img "Mateo Rossi" [ref=e1036]
+              - generic [ref=e1037]:
+                - generic [ref=e1038]:
+                  - text: Mateo Rossi
+                  - generic [ref=e1039]: IT
+                - paragraph [ref=e1040]: "@mat"
+            - blockquote [ref=e1041]: Chat reacted as soon as the AI cast kicked in.
+          - generic [ref=e1043]:
+            - generic [ref=e1044]:
+              - img "Maya Patel" [ref=e1046]
+              - generic [ref=e1047]:
+                - generic [ref=e1048]:
+                  - text: Maya Patel
+                  - generic [ref=e1049]: IN
+                - paragraph [ref=e1050]: "@maya"
+            - blockquote [ref=e1051]: Endgames finally held audience attention.
+          - generic [ref=e1053]:
+            - generic [ref=e1054]:
+              - img "Noah Smith" [ref=e1056]
+              - generic [ref=e1057]:
+                - generic [ref=e1058]:
+                  - text: Noah Smith
+                  - generic [ref=e1059]: US
+                - paragraph [ref=e1060]: "@noah"
+            - blockquote [ref=e1061]: The commentary layer feels broadcast-ready.
+          - generic [ref=e1063]:
+            - generic [ref=e1064]:
+              - img "Lucas Stone" [ref=e1066]
+              - generic [ref=e1067]:
+                - generic [ref=e1068]:
+                  - text: Lucas Stone
+                  - generic [ref=e1069]: FR
+                - paragraph [ref=e1070]: "@luc"
+            - blockquote [ref=e1071]: Easy to picture this in every club event.
+          - generic [ref=e1073]:
+            - generic [ref=e1074]:
+              - img "Haruto Sato" [ref=e1076]
+              - generic [ref=e1077]:
+                - generic [ref=e1078]:
+                  - text: Haruto Sato
+                  - generic [ref=e1079]: JP
+                - paragraph [ref=e1080]: "@haru"
+            - blockquote [ref=e1081]: The pacing worked even on mobile viewers.
+          - generic [ref=e1083]:
+            - generic [ref=e1084]:
+              - img "Emma Lee" [ref=e1086]
+              - generic [ref=e1087]:
+                - generic [ref=e1088]:
+                  - text: Emma Lee
+                  - generic [ref=e1089]: CA
+                - paragraph [ref=e1090]: "@emma"
+            - blockquote [ref=e1091]: Caster mode gave our stream an identity.
+          - generic [ref=e1093]:
+            - generic [ref=e1094]:
+              - img "Carlos Ray" [ref=e1096]
+              - generic [ref=e1097]:
+                - generic [ref=e1098]:
+                  - text: Carlos Ray
+                  - generic [ref=e1099]: ES
+                - paragraph [ref=e1100]: "@carl"
+            - blockquote [ref=e1101]: This is the missing energy for amateur chess.
+        - generic [ref=e1102]:
+          - generic [ref=e1104]:
+            - generic [ref=e1105]:
+              - img "Ava Green" [ref=e1107]
+              - generic [ref=e1108]:
+                - generic [ref=e1109]:
+                  - text: Ava Green
+                  - generic [ref=e1110]: AU
+                - paragraph [ref=e1111]: "@ava"
+            - blockquote [ref=e1112]: Liquid Chess made our finals feel alive.
+          - generic [ref=e1114]:
+            - generic [ref=e1115]:
+              - img "Ana Miller" [ref=e1117]
+              - generic [ref=e1118]:
+                - generic [ref=e1119]:
+                  - text: Ana Miller
+                  - generic [ref=e1120]: DE
+                - paragraph [ref=e1121]: "@ana"
+            - blockquote [ref=e1122]: The voice cards are exactly what our stream needed.
+          - generic [ref=e1124]:
+            - generic [ref=e1125]:
+              - img "Mateo Rossi" [ref=e1127]
+              - generic [ref=e1128]:
+                - generic [ref=e1129]:
+                  - text: Mateo Rossi
+                  - generic [ref=e1130]: IT
+                - paragraph [ref=e1131]: "@mat"
+            - blockquote [ref=e1132]: Chat reacted as soon as the AI cast kicked in.
+          - generic [ref=e1134]:
+            - generic [ref=e1135]:
+              - img "Maya Patel" [ref=e1137]
+              - generic [ref=e1138]:
+                - generic [ref=e1139]:
+                  - text: Maya Patel
+                  - generic [ref=e1140]: IN
+                - paragraph [ref=e1141]: "@maya"
+            - blockquote [ref=e1142]: Endgames finally held audience attention.
+          - generic [ref=e1144]:
+            - generic [ref=e1145]:
+              - img "Noah Smith" [ref=e1147]
+              - generic [ref=e1148]:
+                - generic [ref=e1149]:
+                  - text: Noah Smith
+                  - generic [ref=e1150]: US
+                - paragraph [ref=e1151]: "@noah"
+            - blockquote [ref=e1152]: The commentary layer feels broadcast-ready.
+          - generic [ref=e1154]:
+            - generic [ref=e1155]:
+              - img "Lucas Stone" [ref=e1157]
+              - generic [ref=e1158]:
+                - generic [ref=e1159]:
+                  - text: Lucas Stone
+                  - generic [ref=e1160]: FR
+                - paragraph [ref=e1161]: "@luc"
+            - blockquote [ref=e1162]: Easy to picture this in every club event.
+          - generic [ref=e1164]:
+            - generic [ref=e1165]:
+              - img "Haruto Sato" [ref=e1167]
+              - generic [ref=e1168]:
+                - generic [ref=e1169]:
+                  - text: Haruto Sato
+                  - generic [ref=e1170]: JP
+                - paragraph [ref=e1171]: "@haru"
+            - blockquote [ref=e1172]: The pacing worked even on mobile viewers.
+          - generic [ref=e1174]:
+            - generic [ref=e1175]:
+              - img "Emma Lee" [ref=e1177]
+              - generic [ref=e1178]:
+                - generic [ref=e1179]:
+                  - text: Emma Lee
+                  - generic [ref=e1180]: CA
+                - paragraph [ref=e1181]: "@emma"
+            - blockquote [ref=e1182]: Caster mode gave our stream an identity.
+          - generic [ref=e1184]:
+            - generic [ref=e1185]:
+              - img "Carlos Ray" [ref=e1187]
+              - generic [ref=e1188]:
+                - generic [ref=e1189]:
+                  - text: Carlos Ray
+                  - generic [ref=e1190]: ES
+                - paragraph [ref=e1191]: "@carl"
+            - blockquote [ref=e1192]: This is the missing energy for amateur chess.
+        - generic [ref=e1193]:
+          - generic [ref=e1195]:
+            - generic [ref=e1196]:
+              - img "Ava Green" [ref=e1198]
+              - generic [ref=e1199]:
+                - generic [ref=e1200]:
+                  - text: Ava Green
+                  - generic [ref=e1201]: AU
+                - paragraph [ref=e1202]: "@ava"
+            - blockquote [ref=e1203]: Liquid Chess made our finals feel alive.
+          - generic [ref=e1205]:
+            - generic [ref=e1206]:
+              - img "Ana Miller" [ref=e1208]
+              - generic [ref=e1209]:
+                - generic [ref=e1210]:
+                  - text: Ana Miller
+                  - generic [ref=e1211]: DE
+                - paragraph [ref=e1212]: "@ana"
+            - blockquote [ref=e1213]: The voice cards are exactly what our stream needed.
+          - generic [ref=e1215]:
+            - generic [ref=e1216]:
+              - img "Mateo Rossi" [ref=e1218]
+              - generic [ref=e1219]:
+                - generic [ref=e1220]:
+                  - text: Mateo Rossi
+                  - generic [ref=e1221]: IT
+                - paragraph [ref=e1222]: "@mat"
+            - blockquote [ref=e1223]: Chat reacted as soon as the AI cast kicked in.
+          - generic [ref=e1225]:
+            - generic [ref=e1226]:
+              - img "Maya Patel" [ref=e1228]
+              - generic [ref=e1229]:
+                - generic [ref=e1230]:
+                  - text: Maya Patel
+                  - generic [ref=e1231]: IN
+                - paragraph [ref=e1232]: "@maya"
+            - blockquote [ref=e1233]: Endgames finally held audience attention.
+          - generic [ref=e1235]:
+            - generic [ref=e1236]:
+              - img "Noah Smith" [ref=e1238]
+              - generic [ref=e1239]:
+                - generic [ref=e1240]:
+                  - text: Noah Smith
+                  - generic [ref=e1241]: US
+                - paragraph [ref=e1242]: "@noah"
+            - blockquote [ref=e1243]: The commentary layer feels broadcast-ready.
+          - generic [ref=e1245]:
+            - generic [ref=e1246]:
+              - img "Lucas Stone" [ref=e1248]
+              - generic [ref=e1249]:
+                - generic [ref=e1250]:
+                  - text: Lucas Stone
+                  - generic [ref=e1251]: FR
+                - paragraph [ref=e1252]: "@luc"
+            - blockquote [ref=e1253]: Easy to picture this in every club event.
+          - generic [ref=e1255]:
+            - generic [ref=e1256]:
+              - img "Haruto Sato" [ref=e1258]
+              - generic [ref=e1259]:
+                - generic [ref=e1260]:
+                  - text: Haruto Sato
+                  - generic [ref=e1261]: JP
+                - paragraph [ref=e1262]: "@haru"
+            - blockquote [ref=e1263]: The pacing worked even on mobile viewers.
+          - generic [ref=e1265]:
+            - generic [ref=e1266]:
+              - img "Emma Lee" [ref=e1268]
+              - generic [ref=e1269]:
+                - generic [ref=e1270]:
+                  - text: Emma Lee
+                  - generic [ref=e1271]: CA
+                - paragraph [ref=e1272]: "@emma"
+            - blockquote [ref=e1273]: Caster mode gave our stream an identity.
+          - generic [ref=e1275]:
+            - generic [ref=e1276]:
+              - img "Carlos Ray" [ref=e1278]
+              - generic [ref=e1279]:
+                - generic [ref=e1280]:
+                  - text: Carlos Ray
+                  - generic [ref=e1281]: ES
+                - paragraph [ref=e1282]: "@carl"
+            - blockquote [ref=e1283]: This is the missing energy for amateur chess.
+  - generic [ref=e1285]:
+    - img [ref=e1287]
+    - generic [ref=e1289]:
+      - paragraph [ref=e1292]: What are you waiting for, join us now!
+      - generic [ref=e1293]: What are you waiting for
+      - generic [ref=e1294]: join us now!
+    - img [ref=e1296]
+  - generic [ref=e1301]:
+    - generic [ref=e1302]:
+      - paragraph [ref=e1303]: FAQ
+      - heading "Answers before the next move." [level=2] [ref=e1304]
+    - generic [ref=e1305]:
+      - generic [ref=e1306]:
+        - heading "Can I replace the placeholder media?" [level=3] [ref=e1307]:
+          - button "Can I replace the placeholder media?" [expanded] [ref=e1308] [cursor=pointer]:
+            - text: Can I replace the placeholder media?
+            - img [ref=e1309]
+        - region "Can I replace the placeholder media?" [ref=e1311]:
+          - paragraph [ref=e1312]: Yes. The hero section is prepared for paired video and commentary audio assets by matching filenames.
+      - heading "Does the hook intro always show?" [level=3] [ref=e1314]:
+        - button "Does the hook intro always show?" [ref=e1315] [cursor=pointer]:
+          - text: Does the hook intro always show?
+          - img [ref=e1316]
+      - heading "Is the navbar fixed?" [level=3] [ref=e1319]:
+        - button "Is the navbar fixed?" [ref=e1320] [cursor=pointer]:
+          - text: Is the navbar fixed?
+          - img [ref=e1321]
+      - heading "What powers the keyboard?" [level=3] [ref=e1324]:
+        - button "What powers the keyboard?" [ref=e1325] [cursor=pointer]:
+          - text: What powers the keyboard?
+          - img [ref=e1326]
+      - heading "Can voices be replaced later?" [level=3] [ref=e1329]:
+        - button "Can voices be replaced later?" [ref=e1330] [cursor=pointer]:
+          - text: Can voices be replaced later?
+          - img [ref=e1331]
+      - heading "Is signup wired?" [level=3] [ref=e1334]:
+        - button "Is signup wired?" [ref=e1335] [cursor=pointer]:
+          - text: Is signup wired?
+          - img [ref=e1336]
+  - generic [ref=e1339]:
+    - generic [ref=e1342]:
+      - paragraph [ref=e1343]:
+        - generic [ref=e1344]: Liquid Chess For
+        - text: Social Community
+      - paragraph [ref=e1345]:
+        - generic [ref=e1346]: Liquid Chess For
+        - text: Tournament Leagues
+      - paragraph [ref=e1347]:
+        - generic [ref=e1348]: Liquid Chess For
+        - text: Live Creators
+      - paragraph [ref=e1349]:
+        - generic [ref=e1350]: Liquid Chess For
+        - text: Club Nights
+    - generic [ref=e1351]:
+      - generic [ref=e1352]:
+        - img [ref=e1353]
+        - paragraph [ref=e1354]: AI commentary designed to make every chess stream feel alive.
+        - generic [ref=e1355]: © 2026 Liquid Chess. All rights reserved.
+      - generic [ref=e1356]:
+        - generic [ref=e1357]:
+          - heading "Product" [level=3] [ref=e1358]
+          - link "Features" [ref=e1359] [cursor=pointer]:
+            - /url: "#hero"
+          - link "Pricing" [ref=e1360] [cursor=pointer]:
+            - /url: "#hero"
+          - link "Testimonials" [ref=e1361] [cursor=pointer]:
+            - /url: "#hero"
+          - link "Integration" [ref=e1362] [cursor=pointer]:
+            - /url: "#hero"
+        - generic [ref=e1363]:
+          - heading "Company" [level=3] [ref=e1364]
+          - link "FAQs" [ref=e1365] [cursor=pointer]:
+            - /url: "#hero"
+          - link "About Us" [ref=e1366] [cursor=pointer]:
+            - /url: "#hero"
+          - link "Privacy Policy" [ref=e1367] [cursor=pointer]:
+            - /url: "#hero"
+          - link "Terms" [ref=e1368] [cursor=pointer]:
+            - /url: "#hero"
+        - generic [ref=e1369]:
+          - heading "Resources" [level=3] [ref=e1370]
+          - link "Blog" [ref=e1371] [cursor=pointer]:
+            - /url: "#hero"
+          - link "Changelog" [ref=e1372] [cursor=pointer]:
+            - /url: "#hero"
+          - link "Brand" [ref=e1373] [cursor=pointer]:
+            - /url: "#hero"
+          - link "Help" [ref=e1374] [cursor=pointer]:
+            - /url: "#hero"
+        - generic [ref=e1375]:
+          - heading "Social Links" [level=3] [ref=e1376]
+          - link "Facebook" [ref=e1377] [cursor=pointer]:
+            - /url: "#hero"
+            - img [ref=e1378]
+            - text: Facebook
+          - link "Instagram" [ref=e1380] [cursor=pointer]:
+            - /url: "#hero"
+            - img [ref=e1381]
+            - text: Instagram
+          - link "Youtube" [ref=e1384] [cursor=pointer]:
+            - /url: "#hero"
+            - img [ref=e1385]
+            - text: Youtube
+          - link "LinkedIn" [ref=e1388] [cursor=pointer]:
+            - /url: "#hero"
+            - img [ref=e1389]
+            - text: LinkedIn

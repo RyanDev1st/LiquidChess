@@ -37,8 +37,3 @@ Use the component design\desktop-web\components\footer\footer.md for the footer 
 - Compress videos and 3D models for lower-end devices, but make sure they still look good and serve their purpose. 
 - Remember our brand is Liquid Chess. The components will have the name of the authors who designed them in the comments, but make sure to adapt the design to fit the overall aesthetic and theme of Liquid Chess.
 - Strictly follow the md files AND use the assets in the specified directories. The design and implementation should be ready for integration as soon as the assets are put in place.
-# References:
-
-src\design\reference\landing-page\LiquidChess.html
-
-This is what I made. It is vanilla and not good enough yet. But you could take a look to see my standards.

@@ -1,5 +1,7 @@
 This folder contains desktop-web design references.
 
+We will focus and work on only the landing page for now, but the design references for the other pages will also be in this folder.
+
 Use these rules for design tasks:
 
 1. Prioritize typography, layout, and visual hierarchy.

@@ -1,0 +1,14 @@
+- generic [ref=e2]:
+  - generic [ref=e4]:
+    - generic [ref=e7]:
+      - img
+    - generic [ref=e10]:
+      - generic [ref=e17]: liquidchess — bash
+      - paragraph [ref=e19]: LIQUID CHESS · AI COMMENTARY ENGINE
+  - banner [ref=e21]:
+    - navigation [ref=e22]:
+      - link [ref=e23] [cursor=pointer]:
+        - /url: "#hero"
+        - img [ref=e24]:
+          - generic [ref=e25]: Liquid
+          - generic [ref=e26]: Chess
