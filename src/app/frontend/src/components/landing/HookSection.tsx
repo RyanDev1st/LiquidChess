@@ -161,7 +161,7 @@ export function HookSection({ onComplete }: HookSectionProps) {
           sizing="fill"
         />
       </div>
-      <div className="absolute inset-0 bg-[#070707]/60" />
+      <div className="absolute inset-0 bg-[#070707]/20" />
 
       {/* Terminal card */}
       <motion.div

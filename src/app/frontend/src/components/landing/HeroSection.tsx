@@ -21,60 +21,169 @@ const generateFrames = (): VideoFrameData[] =>
     rotation: (Math.random() - 0.5) * 12,
   }));
 
+// Split a fused BufferGeometry into separate geometries per connected component.
+// Works on indexed geometries; returns original if only one component is found.
+function splitByConnectedComponents(geometry: THREE.BufferGeometry): THREE.BufferGeometry[] {
+  const index = geometry.index;
+  if (!index) return [geometry];
+
+  const vertCount = geometry.attributes.position.count;
+  const indices = index.array as Uint16Array | Uint32Array;
+
+  // Union-Find with path compression
+  const parent = new Int32Array(vertCount);
+  for (let i = 0; i < vertCount; i++) parent[i] = i;
+
+  function find(x: number): number {
+    while (parent[x] !== x) { parent[x] = parent[parent[x]]; x = parent[x]; }
+    return x;
+  }
+  function union(a: number, b: number) { parent[find(a)] = find(b); }
+
+  // Union vertices sharing a triangle
+  for (let i = 0; i < indices.length; i += 3) {
+    union(indices[i], indices[i + 1]);
+    union(indices[i + 1], indices[i + 2]);
+  }
+
+  // Group triangle starts by root component
+  const components = new Map<number, number[]>();
+  for (let i = 0; i < indices.length; i += 3) {
+    const root = find(indices[i]);
+    let arr = components.get(root);
+    if (!arr) { arr = []; components.set(root, arr); }
+    arr.push(i);
+  }
+
+  if (components.size < 2) return [geometry];
+
+  const pos = geometry.attributes.position;
+  const nor = geometry.attributes.normal;
+  const uv = geometry.attributes.uv;
+
+  return [...components.values()].map((triStarts) => {
+    const vertexMap = new Map<number, number>();
+    const newPos: number[] = [];
+    const newNor: number[] = [];
+    const newUV: number[] = [];
+    const newIdx: number[] = [];
+
+    for (const triStart of triStarts) {
+      for (let k = 0; k < 3; k++) {
+        const old = indices[triStart + k];
+        if (!vertexMap.has(old)) {
+          const n = newPos.length / 3;
+          vertexMap.set(old, n);
+          newPos.push(pos.getX(old), pos.getY(old), pos.getZ(old));
+          if (nor) newNor.push(nor.getX(old), nor.getY(old), nor.getZ(old));
+          if (uv) newUV.push(uv.getX(old), uv.getY(old));
+        }
+        newIdx.push(vertexMap.get(old)!);
+      }
+    }
+
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(newPos), 3));
+    if (nor) geo.setAttribute("normal", new THREE.BufferAttribute(new Float32Array(newNor), 3));
+    if (uv) geo.setAttribute("uv", new THREE.BufferAttribute(new Float32Array(newUV), 2));
+    geo.setIndex(new THREE.BufferAttribute(new Uint32Array(newIdx), 1));
+    geo.computeVertexNormals();
+    return geo;
+  });
+}
+
 function ChessScene({ containerRef }: { containerRef: React.RefObject<HTMLElement> }) {
   const fbxSource = useFBX("/models/chess-pieces.fbx");
   const sceneGroupRef = useRef<THREE.Group>(null);
-  const pieceRefs = useRef<THREE.Object3D[]>([]);
+  const pieceGroupRefs = useRef<THREE.Group[]>([]);
   const initPosRef = useRef<THREE.Vector3[]>([]);
   const timeRef = useRef(0);
   const offsetsRef = useRef([new THREE.Vector3(), new THREE.Vector3()]);
   const scaleTargets = useRef([1, 1]);
 
   useEffect(() => {
-    if (!sceneGroupRef.current || pieceRefs.current.length > 0) return;
+    if (!sceneGroupRef.current || pieceGroupRefs.current.length > 0) return;
 
     const clone = fbxSource.clone(true);
 
-    // Shadows only — preserve original FBX materials
-    clone.traverse((obj) => {
-      if (obj instanceof THREE.Mesh) {
-        obj.castShadow = true;
-        obj.receiveShadow = false;
-      }
-    });
-
-    // Normalize scale: target height = 5 units
+    // Normalize scale
     const rawBox = new THREE.Box3().setFromObject(clone);
     const rawSize = new THREE.Vector3();
     rawBox.getSize(rawSize);
     const scaleFactor = 5 / Math.max(rawSize.x, rawSize.y, rawSize.z);
     clone.scale.setScalar(scaleFactor);
 
-    // Center after applying scale
+    // Center vertically; keep XZ as original
     const scaledBox = new THREE.Box3().setFromObject(clone);
     const scaledCenter = scaledBox.getCenter(new THREE.Vector3());
-    clone.position.sub(scaledCenter);
-    clone.position.y -= 1;
+    clone.position.set(-scaledCenter.x, -scaledCenter.y - 1, -scaledCenter.z);
 
-    sceneGroupRef.current.add(clone);
-
-    // Find the two chess piece groups: direct non-empty children, sorted left→right by X center
-    const candidatePieces = clone.children.filter((child) => {
-      const b = new THREE.Box3().setFromObject(child);
-      return !b.isEmpty();
+    // Find the fused mesh in the clone and split into two pieces
+    const meshes: THREE.Mesh[] = [];
+    clone.traverse((obj) => {
+      if (obj instanceof THREE.Mesh) meshes.push(obj);
     });
 
-    candidatePieces.sort((a, b) => {
+    if (meshes.length === 1) {
+      // Single fused mesh — split by connected components
+      const sourceMesh = meshes[0];
+      const components = splitByConnectedComponents(sourceMesh.geometry);
+
+      if (components.length >= 2) {
+        // Sort by bounding box center X: [0] = left (King), [1] = right (Queen)
+        const sorted = components.map((geo) => {
+          const b = new THREE.Box3().setFromBufferAttribute(geo.attributes.position as THREE.BufferAttribute);
+          return { geo, cx: (b.min.x + b.max.x) / 2 };
+        }).sort((a, b) => a.cx - b.cx);
+
+        sorted.forEach(({ geo }, i) => {
+          const mat = (sourceMesh.material as THREE.Material).clone ? (sourceMesh.material as THREE.Material).clone() : sourceMesh.material;
+          const mesh = new THREE.Mesh(geo, mat);
+          mesh.castShadow = true;
+          mesh.position.copy(sourceMesh.position);
+          mesh.rotation.copy(sourceMesh.rotation);
+          mesh.scale.copy(sourceMesh.scale);
+
+          const group = new THREE.Group();
+          group.add(mesh);
+          // King (i=0) slightly forward, Queen (i=1) slightly back
+          group.position.z = i === 0 ? 0.6 : -0.3;
+          sceneGroupRef.current!.add(group);
+          pieceGroupRefs.current[i] = group;
+          initPosRef.current[i] = group.position.clone();
+        });
+        // Tilt entire scene for top-down perspective matching ref.png
+        sceneGroupRef.current!.rotation.x = -0.18;
+
+        // Remove the original fused clone from scene (pieces added individually)
+        return;
+      }
+    }
+
+    // Fallback: multiple separate meshes already, or split failed — use child groups
+    const childPieces = clone.children.filter((c) => {
+      const b = new THREE.Box3().setFromObject(c);
+      return !b.isEmpty();
+    });
+    childPieces.sort((a, b) => {
       const ca = new THREE.Box3().setFromObject(a).getCenter(new THREE.Vector3());
       const cb = new THREE.Box3().setFromObject(b).getCenter(new THREE.Vector3());
       return ca.x - cb.x;
     });
 
-    if (candidatePieces.length >= 2) {
-      pieceRefs.current = [candidatePieces[0], candidatePieces[candidatePieces.length - 1]];
-      pieceRefs.current.forEach((p, i) => {
-        initPosRef.current[i] = p.position.clone();
+    if (childPieces.length >= 2) {
+      childPieces.forEach((child, i) => {
+        const g = new THREE.Group();
+        g.position.copy(child.position);
+        g.add(child);
+        sceneGroupRef.current!.add(g);
+        pieceGroupRefs.current[i] = g;
+        initPosRef.current[i] = g.position.clone();
       });
+    } else {
+      // Last fallback: render whole model as single unit
+      clone.traverse((obj) => { if (obj instanceof THREE.Mesh) obj.castShadow = true; });
+      sceneGroupRef.current.add(clone);
     }
   }, [fbxSource]);
 
@@ -82,7 +191,7 @@ function ChessScene({ containerRef }: { containerRef: React.RefObject<HTMLElemen
 
   useEffect(() => {
     return scrollYProgress.on("change", (v) => {
-      if (pieceRefs.current.length < 2) return;
+      if (pieceGroupRefs.current.length < 2) return;
 
       if (v < 0.25) {
         const t = v / 0.25;
@@ -91,9 +200,8 @@ function ChessScene({ containerRef }: { containerRef: React.RefObject<HTMLElemen
         scaleTargets.current = [1, 1];
       } else if (v < 0.5) {
         const t = (v - 0.25) / 0.25;
-        offsetsRef.current[0].set(-3 - 3 * t, 0, -t);
-        offsetsRef.current[1].set(3 + 3 * t, 0, -t);
-        // Queen scales up slightly so both appear same visual size when separated
+        offsetsRef.current[0].set(-3 - 2 * t, 0, -t);
+        offsetsRef.current[1].set(3 + 2 * t, 0, -t);
         scaleTargets.current = [1, 1 + 0.15 * t];
       } else {
         offsetsRef.current[0].set(-12, 0, -2);
@@ -108,21 +216,20 @@ function ChessScene({ containerRef }: { containerRef: React.RefObject<HTMLElemen
     timeRef.current += delta;
     const lerpSpeed = 2 * delta;
 
-    pieceRefs.current.forEach((piece, i) => {
+    pieceGroupRefs.current.forEach((group, i) => {
       const init = initPosRef.current[i];
       if (!init) return;
-      const offset = offsetsRef.current[i];
+      const off = offsetsRef.current[i];
 
-      piece.position.x += (init.x + offset.x - piece.position.x) * lerpSpeed;
-      piece.position.z += (init.z + offset.z - piece.position.z) * lerpSpeed;
+      group.position.x += (init.x + off.x - group.position.x) * lerpSpeed;
+      group.position.z += (init.z + off.z - group.position.z) * lerpSpeed;
 
-      // Idle sway
-      piece.rotation.y = Math.sin(timeRef.current * 0.35 + i * Math.PI) * 0.06 + (i === 0 ? 0.2 : -0.2);
+      // Idle sway — King faces slightly right, Queen slightly left (inward toward each other)
+      group.rotation.y = Math.sin(timeRef.current * 0.35 + i * Math.PI) * 0.05 + (i === 0 ? 0.15 : -0.15);
 
-      // Scale (y + z only to avoid disrupting horizontal mirror)
       const st = scaleTargets.current[i];
-      piece.scale.y += (st - piece.scale.y) * lerpSpeed;
-      piece.scale.z += (st - piece.scale.z) * lerpSpeed;
+      group.scale.y += (st - group.scale.y) * lerpSpeed;
+      group.scale.z += (st - group.scale.z) * lerpSpeed;
     });
   });
 
@@ -132,11 +239,12 @@ function ChessScene({ containerRef }: { containerRef: React.RefObject<HTMLElemen
 function SceneContent({ containerRef }: { containerRef: React.RefObject<HTMLElement> }) {
   return (
     <>
-      <ambientLight intensity={0.4} />
-      <directionalLight position={[5, 8, 5]} intensity={1.5} castShadow />
-      <pointLight position={[-4, 3, 4]} intensity={0.8} color="#c9a84c" />
-      <pointLight position={[4, 3, 4]} intensity={0.8} color="#c9a84c" />
-      <Environment preset="city" />
+      <ambientLight intensity={0.5} />
+      <directionalLight position={[3, 10, 6]} intensity={2.0} castShadow />
+      <directionalLight position={[-3, 6, 8]} intensity={0.6} />
+      <pointLight position={[-3, 4, 5]} intensity={0.9} color="#c9a84c" />
+      <pointLight position={[3, 4, 5]} intensity={0.9} color="#c9a84c" />
+      <Environment preset="studio" />
       <ChessScene containerRef={containerRef} />
     </>
   );
@@ -239,7 +347,6 @@ export function HeroSection({ containerRef }: { containerRef: React.RefObject<HT
 
   return (
     <div id="hero" className="snap-section flex flex-col items-center justify-center relative overflow-hidden">
-      {/* Background gradient */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(201,168,76,0.05)_0%,transparent_70%)]" />
 
       {/* Video frames streaming inward */}
@@ -256,7 +363,7 @@ export function HeroSection({ containerRef }: { containerRef: React.RefObject<HT
       <div className="absolute inset-0">
         <Suspense fallback={null}>
           <Canvas
-            camera={{ position: [0, 1, 8], fov: 42 }}
+            camera={{ position: [0, 3, 9], fov: 40 }}
             gl={{ antialias: true, alpha: true }}
             style={{ background: "transparent" }}
           >
