@@ -4,6 +4,9 @@ import SplineKeyboard from "@/components/three/SplineKeyboard";
 
 const VIDEO_SRC = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
 
+// Demo section bg is #000000 so keyboard Spline clear color matches
+const PAGE_BG = 0x000000;
+
 const BORING_MSGS = [
   { user: "GuestPlayer", text: "nice move", time: "1:02" },
   { user: "chess_fan", text: "ok", time: "1:15" },
@@ -26,7 +29,7 @@ const HYPE_MSGS = [
 function ChatBox({ aiActive }: { aiActive: boolean }) {
   const [messages, setMessages] = useState(aiActive ? HYPE_MSGS : BORING_MSGS);
   const [typing, setTyping] = useState(false);
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setMessages(aiActive ? HYPE_MSGS : BORING_MSGS);
@@ -49,12 +52,15 @@ function ChatBox({ aiActive }: { aiActive: boolean }) {
   }, [aiActive]);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
   }, [messages, typing]);
 
   return (
-    <div className="flex flex-col h-full rounded-xl overflow-hidden border border-white/8 bg-black/40 backdrop-blur-sm">
-      <div className="px-3 py-2 border-b border-white/8 flex items-center gap-2 bg-white/3 flex-shrink-0">
+    <div className="flex flex-col h-full rounded-xl overflow-hidden border border-white/8 bg-black/70 backdrop-blur-md">
+      {/* Header */}
+      <div className="px-3 py-2 border-b border-white/8 flex items-center gap-2 bg-white/4 flex-shrink-0">
         <div
           className={`w-2 h-2 rounded-full transition-all duration-500 ${
             aiActive
@@ -71,7 +77,9 @@ function ChatBox({ aiActive }: { aiActive: boolean }) {
           )}
         </span>
       </div>
-      <div className="flex-1 overflow-y-auto p-3 space-y-2 min-h-0">
+
+      {/* Messages */}
+      <div ref={scrollRef} className="flex-1 overflow-y-auto p-3 space-y-2 min-h-0">
         <AnimatePresence initial={false}>
           {messages.map((msg, i) => (
             <motion.div
@@ -100,8 +108,9 @@ function ChatBox({ aiActive }: { aiActive: boolean }) {
             ))}
           </div>
         )}
-        <div ref={bottomRef} />
       </div>
+
+      {/* Input stub */}
       <div className="px-3 py-2 border-t border-white/8 flex-shrink-0">
         <div className="rounded-lg px-3 py-1.5 text-white/20 text-xs bg-white/4 border border-white/6">
           Type a message...
@@ -113,22 +122,21 @@ function ChatBox({ aiActive }: { aiActive: boolean }) {
 
 function VideoPanel({ aiActive }: { aiActive: boolean }) {
   return (
-    <div className="relative h-full rounded-xl overflow-hidden">
+    <div className="relative w-full h-full rounded-xl overflow-hidden">
       {/* Base video — muted, no commentary */}
       <video
         src={VIDEO_SRC}
         className="absolute inset-0 w-full h-full object-cover"
-        style={{ opacity: 0.75 }}
         muted
         autoPlay
         loop
         playsInline
       />
-      <div className="absolute bottom-2 left-2 z-10 px-2 py-0.5 rounded text-white/40 text-[10px] bg-black/50 backdrop-blur-sm font-mono">
+      <div className="absolute bottom-2 left-2 z-10 px-2 py-0.5 rounded text-white/50 text-[10px] bg-black/60 backdrop-blur-sm font-mono">
         No commentary
       </div>
 
-      {/* AI overlay — wipes in from left */}
+      {/* AI layer — wipes in from left */}
       <div
         className="absolute inset-0 z-20"
         style={{
@@ -161,7 +169,7 @@ function VideoPanel({ aiActive }: { aiActive: boolean }) {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-white shadow-md" />
       </div>
 
-      {/* Border */}
+      {/* Border overlay */}
       <div className="absolute inset-0 rounded-xl border border-white/10 pointer-events-none z-40" />
     </div>
   );
@@ -171,23 +179,10 @@ function Wire({ aiActive }: { aiActive: boolean }) {
   return (
     <div className="relative flex justify-center" style={{ height: 44 }}>
       <svg width="60" height="44" viewBox="0 0 60 44" fill="none" style={{ overflow: "visible" }}>
-        {/* Shadow glow under active wire */}
         {aiActive && (
-          <path
-            d="M30 0 L30 44"
-            stroke="rgba(201,168,76,0.3)"
-            strokeWidth="10"
-            strokeLinecap="round"
-          />
+          <path d="M30 0 L30 44" stroke="rgba(201,168,76,0.3)" strokeWidth="10" strokeLinecap="round" />
         )}
-        {/* Base cable */}
-        <path
-          d="M30 0 L30 44"
-          stroke="rgba(255,255,255,0.12)"
-          strokeWidth="3"
-          strokeLinecap="round"
-        />
-        {/* Active wire */}
+        <path d="M30 0 L30 44" stroke="rgba(255,255,255,0.12)" strokeWidth="3" strokeLinecap="round" />
         <path
           d="M30 0 L30 44"
           stroke={aiActive ? "#c9a84c" : "rgba(255,255,255,0.25)"}
@@ -195,9 +190,7 @@ function Wire({ aiActive }: { aiActive: boolean }) {
           strokeLinecap="round"
           style={{ transition: "stroke 0.5s ease" }}
         />
-        {/* Plug connector at top */}
         <rect x="26" y="0" width="8" height="4" rx="1" fill={aiActive ? "#c9a84c" : "rgba(255,255,255,0.2)"} style={{ transition: "fill 0.5s" }} />
-        {/* Plug connector at bottom */}
         <rect x="26" y="40" width="8" height="4" rx="1" fill={aiActive ? "#c9a84c" : "rgba(255,255,255,0.2)"} style={{ transition: "fill 0.5s" }} />
       </svg>
     </div>
@@ -208,7 +201,7 @@ export function DemoSection() {
   const [aiActive, setAiActive] = useState(false);
 
   return (
-    <div id="demo" className="snap-section relative flex flex-col overflow-hidden bg-[#060606]">
+    <div id="demo" className="snap-section relative flex flex-col overflow-hidden bg-[#000000]">
       {/* Ambient glow */}
       <div
         className="absolute inset-0 pointer-events-none transition-opacity duration-700"
@@ -218,7 +211,7 @@ export function DemoSection() {
         }}
       />
 
-      {/* Header — compact */}
+      {/* Header */}
       <div className="flex-shrink-0 pt-10 pb-3 text-center px-6 relative z-10">
         <p className="text-xs font-mono uppercase tracking-[0.3em] text-[--gold] mb-2">Live Demo</p>
         <h2 className="text-2xl md:text-3xl font-bold text-white">
@@ -239,10 +232,10 @@ export function DemoSection() {
         </p>
       </div>
 
-      {/* Demo card — video + chat */}
+      {/* Demo card */}
       <div className="flex-1 min-h-0 px-6 md:px-10 relative z-10">
         <motion.div
-          className="h-full rounded-2xl overflow-hidden border border-white/8 bg-black/20 backdrop-blur-sm"
+          className="h-full rounded-2xl overflow-hidden border border-white/8 bg-black/20"
           style={{
             boxShadow: aiActive
               ? "0 0 60px rgba(201,168,76,0.15), 0 0 0 1px rgba(201,168,76,0.2)"
@@ -250,32 +243,37 @@ export function DemoSection() {
             transition: "box-shadow 0.7s ease",
           }}
         >
-          <div className="h-full grid grid-cols-1 md:grid-cols-2">
-            {/* Video */}
-            <div className="relative min-h-[160px] md:min-h-0 border-r border-white/5">
-              <div className="absolute inset-0 p-2">
-                <VideoPanel aiActive={aiActive} />
-              </div>
+          {/* Video fills card; chat floats over right side */}
+          <div className="relative h-full p-2">
+            {/* Video — fills available space */}
+            <div className="absolute inset-2">
+              <VideoPanel aiActive={aiActive} />
             </div>
-            {/* Chat */}
-            <div className="relative min-h-[140px] md:min-h-0">
-              <div className="absolute inset-0 p-2">
-                <ChatBox aiActive={aiActive} />
-              </div>
+
+            {/* Chat — floating panel overlapping right portion of video */}
+            <div
+              className="absolute top-2 right-2 bottom-2 z-30"
+              style={{ width: "clamp(200px, 22%, 300px)" }}
+            >
+              <ChatBox aiActive={aiActive} />
             </div>
           </div>
         </motion.div>
       </div>
 
-      {/* Wire connecting card to keyboard */}
+      {/* Wire */}
       <div className="flex-shrink-0 relative z-10">
         <Wire aiActive={aiActive} />
       </div>
 
-      {/* Keyboard + hint */}
+      {/* Keyboard */}
       <div className="flex-shrink-0 pb-4 px-6 flex flex-col items-center relative z-10">
-        <div className="w-full max-w-xs">
-          <SplineKeyboard onClick={() => setAiActive((v) => !v)} aiActive={aiActive} />
+        <div className="w-full">
+          <SplineKeyboard
+            onClick={() => setAiActive((v) => !v)}
+            aiActive={aiActive}
+            bgColor={PAGE_BG}
+          />
         </div>
         <motion.p
           className="text-white/20 text-[10px] font-mono mt-1 tracking-widest uppercase"
