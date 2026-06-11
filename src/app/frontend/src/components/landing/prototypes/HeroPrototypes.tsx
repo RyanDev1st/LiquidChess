@@ -1,50 +1,36 @@
 "use client";
 
 import { Suspense, useState } from "react";
-import { WorldHero } from "./WorldHero";
-import { EmergenceHero } from "./EmergenceHero";
-import { AwarenessHero } from "./AwarenessHero";
-import { HandHero } from "./HandHero";
-import { GalleryHero } from "./GalleryHero";
-import { BroadcastHero } from "./BroadcastHero";
-import { PopHero } from "./PopHero";
-import { SoundHero } from "./SoundHero";
+import { SplitFlapHero } from "./SplitFlapHero";
+import { BroadsheetHero } from "./BroadsheetHero";
+import { ScrubHero } from "./ScrubHero";
+import { SchematicHero } from "./SchematicHero";
 
-type Variant = "gallery" | "broadcast" | "pop" | "sound" | "world" | "emergence" | "awareness" | "hand";
+type Variant = "splitflap" | "broadsheet" | "scrub" | "schematic";
 
 const VARIANTS: Array<[Variant, string]> = [
-  ["gallery", "Gallery"],
-  ["broadcast", "Broadcast"],
-  ["pop", "Pop"],
-  ["sound", "Sound"],
-  ["world", "World"],
-  ["emergence", "Emergence"],
-  ["awareness", "Awareness"],
-  ["hand", "Hand"],
+  ["splitflap", "Split-Flap"],
+  ["broadsheet", "Broadsheet"],
+  ["scrub", "Scrub"],
+  ["schematic", "Schematic"],
 ];
 
 function initialVariant(): Variant {
   const v = new URLSearchParams(window.location.search).get("proto");
-  return (VARIANTS.find(([id]) => id === v)?.[0] ?? "gallery") as Variant;
+  return (VARIANTS.find(([id]) => id === v)?.[0] ?? "splitflap") as Variant;
 }
 
 export function HeroPrototypes() {
   const [variant, setVariant] = useState<Variant>(initialVariant);
-
   return (
     <div className="fixed inset-0 overflow-hidden bg-black">
       <Suspense fallback={null}>
-        {variant === "gallery" && <GalleryHero />}
-        {variant === "broadcast" && <BroadcastHero />}
-        {variant === "pop" && <PopHero />}
-        {variant === "sound" && <SoundHero />}
-        {variant === "world" && <WorldHero />}
-        {variant === "emergence" && <EmergenceHero />}
-        {variant === "awareness" && <AwarenessHero />}
-        {variant === "hand" && <HandHero />}
+        {variant === "splitflap" && <SplitFlapHero />}
+        {variant === "broadsheet" && <BroadsheetHero />}
+        {variant === "scrub" && <ScrubHero />}
+        {variant === "schematic" && <SchematicHero />}
       </Suspense>
 
-      {/* switcher */}
       <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[100] flex flex-wrap justify-center gap-1 rounded-full border border-white/15 bg-black/70 p-1 backdrop-blur">
         {VARIANTS.map(([v, label]) => (
           <button
