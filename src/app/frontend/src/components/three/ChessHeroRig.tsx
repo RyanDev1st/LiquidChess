@@ -23,13 +23,13 @@ export interface ChessRigRefs {
   micInner: React.RefObject<THREE.Group>;
 }
 
-// Starting layout (progress 0): a tight pair, King front-left, Queen back-right,
-// matching the reference composition. Origins are at each piece's base, so feet
-// sit on y = 0.
+// Rest layout (progress 0): pieces cluster in the RIGHT half of the frame so the
+// editorial copy owns the left. King front, Queen back-right, Mic floating beside
+// her — the reference composition. Origins are at each piece's base (feet on y=0).
 const LAYOUT = {
-  king: { x: -0.55, y: 0, z: 0.25, ry: 0.22 },
-  queen: { x: 0.55, y: 0, z: -0.25, ry: -0.2 },
-  mic: { x: 1.0, y: 0.55, z: 0.05, ry: -0.3 },
+  king: { x: 0.35, y: 0, z: 0.35, ry: 0.26 },
+  queen: { x: 1.5, y: 0, z: -0.15, ry: -0.4 },
+  mic: { x: 2.25, y: 0.5, z: 0.1, ry: -0.35 },
 };
 
 function tuneMaterial(mat: THREE.Material): THREE.Material {

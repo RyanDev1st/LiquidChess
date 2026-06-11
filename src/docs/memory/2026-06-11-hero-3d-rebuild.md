@@ -29,6 +29,14 @@
 - `tsconfig.app.json`: `ignoreDeprecations "6.0"` → `"5.0"` (invalid for TS 5.9).
 - **Still outstanding (out of scope):** pre-existing TS errors in `CTASection.tsx`, `HookSection.tsx`, `container-scroll-animation.tsx`, `pages/landing/index.tsx` block `npm run build`. Dev server (Vite/esbuild) runs fine.
 
+## Redesign + scroll/perf fixes (same day, after first review)
+
+User feedback: "won't scroll", "~5fps laggier", "ugly despite the 3d models". Applied the `final-design` skill → Editorial-Luxury / Split-Stage.
+
+- **Scroll bug (root cause):** `HeroSection` returned a fragment (fixed overlay + section), so the `.snap-container` had **8 children** instead of 7. The `useSnapScroll` hook indexes `children[i] === section i`; the extra child shifted everything by one and broke its offset math. **Fix: `createPortal` the canvas to `document.body`** so the container has exactly its 7 section children. Verified: `children.length === 7`, hero wheel `defaultPrevented === false`.
+- **Lag:** the `HeroVideoFrames` stream used `mix-blend-screen` over the full viewport (per-frame GPU composite) + 6 per-frame `requestAnimationFrame` style writers, on top of `dpr` up to 1.75. **Fix: dropped the blend stream from the hero, `dpr [1,1.4]`, 5→4 lights.** `HeroVideoFrames.tsx` kept for later, no longer imported.
+- **Ugly:** centered hero with copy overlapping the pieces. **Fix: split layout** — serif copy + gold CTA left, pieces clustered right (`LAYOUT` x's now positive); charcoal `#0a0a0c` not pure black; removed the neon drop-shadow glow on the headline; added eval-bar tags. Rest layout + scroll targets retuned (King sweeps from right cluster to far-left flank).
+
 ## Verify
 
-- `npm run dev -- --host 127.0.0.1 --port 3003`, open `/?hook=0`. Confirmed via headless browser: rest (both pieces read), scroll separation/flank, exit+fade, scroll-up return, no console errors.
+- `npm run dev -- --host 127.0.0.1 --port 3003`, open `/?hook=0`. Confirmed via headless browser: rest (split layout, both pieces read), scroll works + flank, exit+fade, scroll-up return, 7 snap children, no console errors.
