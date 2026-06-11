@@ -1,6 +1,8 @@
 "use client";
 
 import { Suspense, useState } from "react";
+import { MoonfallHero } from "./MoonfallHero";
+import { StillwaterHero } from "./StillwaterHero";
 import { WorldHero } from "./WorldHero";
 import { FusionHero } from "./FusionHero";
 import { SplitFlapHero } from "./SplitFlapHero";
@@ -11,10 +13,12 @@ import { DuelHero } from "./DuelHero";
 import { VersusHero } from "./VersusHero";
 import { EclipseHero } from "./EclipseHero";
 
-type Variant = "world" | "fusion" | "duel" | "versus" | "eclipse" | "splitflap" | "broadsheet" | "scrub" | "schematic";
+type Variant = "moonfall" | "stillwater" | "world" | "fusion" | "duel" | "versus" | "eclipse" | "splitflap" | "broadsheet" | "scrub" | "schematic";
 
 const VARIANTS: Array<[Variant, string]> = [
-  ["world", "★ World"],
+  ["moonfall", "★ Moonfall"],
+  ["stillwater", "★ Stillwater"],
+  ["world", "World"],
   ["fusion", "Fusion"],
   ["duel", "Duel"],
   ["versus", "Versus"],
@@ -27,7 +31,7 @@ const VARIANTS: Array<[Variant, string]> = [
 
 function initialVariant(): Variant {
   const v = new URLSearchParams(window.location.search).get("proto");
-  return (VARIANTS.find(([id]) => id === v)?.[0] ?? "world") as Variant;
+  return (VARIANTS.find(([id]) => id === v)?.[0] ?? "moonfall") as Variant;
 }
 
 export function HeroPrototypes() {
@@ -35,6 +39,8 @@ export function HeroPrototypes() {
   return (
     <div className="fixed inset-0 overflow-hidden bg-black">
       <Suspense fallback={null}>
+        {variant === "moonfall" && <MoonfallHero />}
+        {variant === "stillwater" && <StillwaterHero />}
         {variant === "world" && <WorldHero />}
         {variant === "fusion" && <FusionHero />}
         {variant === "duel" && <DuelHero />}
