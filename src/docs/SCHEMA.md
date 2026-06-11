@@ -92,8 +92,8 @@ src/
 │           ├── index.css         # Global CSS (design tokens, dark theme)
 │           ├── components/       # Shared UI components
 │           │   ├── ui/           # ShadCN base components + 21st.dev blocks (ContainerScroll)
-│           │   ├── landing/      # Landing-page-specific components
-│           │   ├── three/        # R3F/Spline 3D components
+│           │   ├── landing/      # Landing sections (HeroSection, HeroVideoFrames, ...)
+│           │   ├── three/        # R3F/Spline 3D components (ChessHeroRig = hero GLB rig)
 │           │   └── layout/       # Layout components (Header)
 │           ├── pages/            # Route-level page components
 │           │   └── landing/
