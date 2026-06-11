@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useMemo, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Environment, Lightformer, useGLTF } from "@react-three/drei";
 import { EffectComposer, Bloom, DepthOfField, Vignette, Noise, GodRays, SMAA } from "@react-three/postprocessing";
@@ -47,7 +47,7 @@ function Monoliths() {
   const hov = useRef({ King: 0, Queen: 0 });
 
   const built = useMemo(() => {
-    const mk = (name: string, color: string, m: number, r: number) => {
+    const mk = (name: string) => {
       const src = (scene.clone(true).getObjectByName(name) as THREE.Object3D)?.clone(true);
       if (!src) return { o: null as THREE.Object3D | null, mats: [] as THREE.MeshStandardMaterial[] };
       const mats: THREE.MeshStandardMaterial[] = [];
@@ -56,9 +56,13 @@ function Monoliths() {
       src.traverse((c) => {
         const mesh = c as THREE.Mesh;
         if (!mesh.isMesh) return;
-        const mat = dissolve(new THREE.MeshStandardMaterial({ color, metalness: m, roughness: r, envMapIntensity: 0.8 }), uni);
+        // KEEP the GLB's authored material (baked Color + Normal maps) — clone it,
+        // then inject dissolve + a gold emissive for hover. White King stays white.
+        const orig = mesh.material as THREE.MeshStandardMaterial;
+        const mat = dissolve(orig.clone(), uni);
         mat.emissive = new THREE.Color("#ffcf6a");
         mat.emissiveIntensity = 0;
+        mat.envMapIntensity = 1.0;
         mesh.material = mat;
         mesh.frustumCulled = false;
         mesh.geometry.computeBoundingBox();
@@ -70,7 +74,7 @@ function Monoliths() {
       src.position.set(-ctr.x, -box.min.y - h / 2, -ctr.z);
       return { o: src, mats };
     };
-    return { king: mk("King", "#4a4c54", 0.45, 0.46), queen: mk("Queen", "#2a2a31", 0.55, 0.4) };
+    return { king: mk("King"), queen: mk("Queen") };
   }, [scene, uni]);
 
   useFrame((state, delta) => {
@@ -173,15 +177,45 @@ function Embers({ count, span, size, color, speedBase }: { count: number; span: 
   );
 }
 
+// Faint receding chessboard underfoot — a quiet "this is chess" signal.
+function Board() {
+  const tex = useMemo(() => {
+    const n = 8, px = 512;
+    const cv = document.createElement("canvas");
+    cv.width = cv.height = px;
+    const ctx = cv.getContext("2d")!;
+    const s = px / n;
+    for (let y = 0; y < n; y++)
+      for (let x = 0; x < n; x++) {
+        ctx.fillStyle = (x + y) % 2 === 0 ? "#241d12" : "#0d0a07";
+        ctx.fillRect(x * s, y * s, s, s);
+      }
+    const t = new THREE.CanvasTexture(cv);
+    t.colorSpace = THREE.SRGBColorSpace;
+    t.wrapS = t.wrapT = THREE.RepeatWrapping;
+    t.repeat.set(3, 3);
+    t.anisotropy = 4;
+    return t;
+  }, []);
+  return (
+    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.34, -1]}>
+      <planeGeometry args={[40, 40]} />
+      <meshStandardMaterial map={tex} roughness={0.7} metalness={0.15} transparent opacity={0.7} />
+    </mesh>
+  );
+}
+
 function Scene({ sun }: { sun: THREE.Mesh | null }) {
   return (
     <>
       <color attach="background" args={["#0c0a09"]} />
       <fogExp2 attach="fog" args={["#0c0a09", 0.072]} />
-      <ambientLight intensity={0.2} color="#b8a890" />
-      <spotLight position={[0.5, 6, -4]} angle={0.8} penumbra={1} intensity={7} color="#ffd28a" />
-      {/* gold rim from behind/sun side so the dark pieces read as lit silhouettes */}
-      <directionalLight position={[0, 3.5, -3]} intensity={4} color="#ffd98a" />
+      <ambientLight intensity={0.32} color="#cfc4b0" />
+      <spotLight position={[0.5, 6, -4]} angle={0.8} penumbra={1} intensity={6} color="#ffd28a" />
+      {/* gold rim from behind/sun side */}
+      <directionalLight position={[0, 3.5, -3]} intensity={3.5} color="#ffd98a" />
+      {/* front key so the white ceramic King reads as WHITE, not silhouette */}
+      <directionalLight position={[0, 2, 6]} intensity={1.5} color="#fff4e6" />
       {/* cool fill from camera-left to sculpt the fronts */}
       <directionalLight position={[-4, 2, 5]} intensity={0.7} color="#acc4ff" />
       <Environment resolution={256} frames={1}>
@@ -189,6 +223,7 @@ function Scene({ sun }: { sun: THREE.Mesh | null }) {
         <Lightformer intensity={1} position={[4, 1, 2]} scale={[5, 5, 1]} color="#7a5a3a" />
       </Environment>
 
+      <Board />
       <Monoliths />
 
       {/* embers (mid, warm) + finer star-glitter (back, bright) */}
@@ -204,6 +239,71 @@ function Scene({ sun }: { sun: THREE.Mesh | null }) {
         <SMAA />
       </EffectComposer>
     </>
+  );
+}
+
+// --- Diegetic chess / commentary signal widgets ----------------------------
+const COMMENTARY = [
+  "1. e4 — he opens the Italian. Safe? No, he's hunting.",
+  "…e5. The classical reply, calm as ever.",
+  "2. Nf3 — the knight eyes the e5 pawn.",
+  "3. Bb5 — the Ruy López. The room leans in.",
+];
+const MOVES = ["e4", "e5", "Nf3", "Nc6", "Bb5", "a6", "Ba4", "Nf6", "O-O", "Be7"];
+
+function Caption() {
+  const [text, setText] = useState("");
+  useEffect(() => {
+    let raf = 0, li = 0, ci = 0, last = 0;
+    const tick = (t: number) => {
+      if (t - last > 38) {
+        last = t;
+        const line = COMMENTARY[li];
+        if (ci <= line.length) setText(line.slice(0, ci++));
+        else if (ci < line.length + 50) ci++;
+        else { ci = 0; li = (li + 1) % COMMENTARY.length; }
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+  return (
+    <div className="mt-5 flex items-start gap-3">
+      <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-[--gold] animate-pulse" />
+      <p className="font-mono text-[12px] md:text-[13px] leading-relaxed text-white/65">
+        {text}<span className="inline-block w-1.5 h-3.5 ml-0.5 align-middle bg-[--gold]/80 animate-pulse" />
+      </p>
+    </div>
+  );
+}
+
+function EvalBar() {
+  const [v, setV] = useState(0.62);
+  useEffect(() => {
+    const id = setInterval(() => setV(0.4 + Math.random() * 0.4), 1500);
+    return () => clearInterval(id);
+  }, []);
+  return (
+    <div className="pointer-events-none absolute left-8 top-1/2 -translate-y-1/2 z-40 flex flex-col items-center gap-2">
+      <span className="font-mono text-[9px] uppercase tracking-[0.3em] text-white/40">Eval</span>
+      <div className="relative w-1.5 h-40 rounded-full overflow-hidden bg-black/40" style={{ boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.12)" }}>
+        <div className="absolute top-0 inset-x-0 bg-white transition-[height] duration-1000 ease-out" style={{ height: `${(1 - v) * 100}%` }} />
+      </div>
+      <span className="font-mono text-[10px] text-[--gold]/80">+{(v * 2.4).toFixed(2)}</span>
+    </div>
+  );
+}
+
+function MoveTicker() {
+  return (
+    <div className="pointer-events-none absolute bottom-8 right-8 z-40 flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.25em] text-white/45">
+      {MOVES.slice(0, 6).map((m, i) => (
+        <span key={i} style={{ opacity: 1 - i * 0.13, color: i === 0 ? "var(--gold)" : undefined }}>
+          {i % 2 === 0 ? `${Math.floor(i / 2) + 1}.` : ""}{m}
+        </span>
+      ))}
+    </div>
   );
 }
 
@@ -230,18 +330,32 @@ export function WorldHero() {
       {/* cinematic minimal UI */}
       <div className="pointer-events-none absolute inset-0 z-40 font-mono text-[10px] uppercase tracking-[0.4em] text-white/45">
         <div className="absolute top-7 left-8">Liquid Chess</div>
-        <div className="absolute top-7 right-8 flex items-center gap-2">
-          <span className="relative flex h-1.5 w-1.5"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[--gold] opacity-75" /><span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[--gold]" /></span>Live
+        {/* ON AIR + live waveform — the 'voice / broadcast' signal */}
+        <div className="absolute top-7 right-8 flex items-center gap-3">
+          <span className="flex items-center gap-2 text-[--gold]/80"><span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: "#ff4d4d" }} />On Air</span>
+          <span className="flex items-end gap-[2px] h-3">
+            {Array.from({ length: 9 }).map((_, i) => (
+              <span key={i} className="w-[2px] bg-[--gold]/70 origin-bottom" style={{ height: "100%", animation: `whWave 0.9s ease-in-out ${(i % 5) * 0.08}s infinite alternate` }} />
+            ))}
+          </span>
         </div>
-        <div className="absolute bottom-8 left-8">e4 · +1.34</div>
-        <div className="absolute bottom-8 right-8">Move to stir the ash</div>
       </div>
-      <div className="pointer-events-none absolute left-8 md:left-14 bottom-[15%] z-40">
+
+      {/* eval bar (left edge) — the 'chess engine' signal */}
+      <EvalBar />
+
+      {/* move notation ticker (bottom center) — the 'chess' signal */}
+      <MoveTicker />
+
+      {/* headline + live AI commentary caption */}
+      <div className="pointer-events-none absolute left-8 md:left-14 bottom-[15%] z-40 max-w-[44ch]">
         <h1 className="font-display text-white/95 leading-[0.84] tracking-[-0.02em]" style={{ textShadow: "0 4px 50px rgba(0,0,0,0.7)" }}>
           <span className="block font-[330] text-[clamp(2.4rem,5.4vw,4.8rem)]">The game</span>
           <span className="block italic text-[--gold] text-[clamp(2.8rem,6.8vw,6rem)]" style={{ fontWeight: 440, fontVariationSettings: "'opsz' 144, 'WONK' 1" }}>speaks.</span>
         </h1>
+        <Caption />
       </div>
+      <style>{`@keyframes whWave{from{transform:scaleY(0.3)}to{transform:scaleY(1)}}`}</style>
     </div>
   );
 }
