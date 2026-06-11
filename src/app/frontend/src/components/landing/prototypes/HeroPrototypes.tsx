@@ -5,10 +5,16 @@ import { SplitFlapHero } from "./SplitFlapHero";
 import { BroadsheetHero } from "./BroadsheetHero";
 import { ScrubHero } from "./ScrubHero";
 import { SchematicHero } from "./SchematicHero";
+import { DuelHero } from "./DuelHero";
+import { VersusHero } from "./VersusHero";
+import { EclipseHero } from "./EclipseHero";
 
-type Variant = "splitflap" | "broadsheet" | "scrub" | "schematic";
+type Variant = "duel" | "versus" | "eclipse" | "splitflap" | "broadsheet" | "scrub" | "schematic";
 
 const VARIANTS: Array<[Variant, string]> = [
+  ["duel", "Duel"],
+  ["versus", "Versus"],
+  ["eclipse", "Eclipse"],
   ["splitflap", "Split-Flap"],
   ["broadsheet", "Broadsheet"],
   ["scrub", "Scrub"],
@@ -17,7 +23,7 @@ const VARIANTS: Array<[Variant, string]> = [
 
 function initialVariant(): Variant {
   const v = new URLSearchParams(window.location.search).get("proto");
-  return (VARIANTS.find(([id]) => id === v)?.[0] ?? "splitflap") as Variant;
+  return (VARIANTS.find(([id]) => id === v)?.[0] ?? "duel") as Variant;
 }
 
 export function HeroPrototypes() {
@@ -25,6 +31,9 @@ export function HeroPrototypes() {
   return (
     <div className="fixed inset-0 overflow-hidden bg-black">
       <Suspense fallback={null}>
+        {variant === "duel" && <DuelHero />}
+        {variant === "versus" && <VersusHero />}
+        {variant === "eclipse" && <EclipseHero />}
         {variant === "splitflap" && <SplitFlapHero />}
         {variant === "broadsheet" && <BroadsheetHero />}
         {variant === "scrub" && <ScrubHero />}
