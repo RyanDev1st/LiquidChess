@@ -61,6 +61,16 @@ User: scroll "sometimes stops while pieces are in frame, sometimes smooth"; "ent
 - **Choreography** retuned as damped keyframes (`KEYS` rest→split→exit) with rotation; reads scroll, frame-rate independent.
 - **Still open:** pieces only span hero→voiceshowcase. "Use across the whole site" (per-section beats through demo/testimonials/CTA) is a deliberate next pass — deferred to protect the just-stabilized perf/scroll.
 
+## Interactive backdrop + scroll-jank pass (5th pass)
+
+User: scroll still breaks on stop→restart (smooth when scrolling linearly); wants the waveform to move and the board to twinkle + be interactive ("surprise").
+
+- **Scroll stop/start jank — two real causes fixed:**
+  1. The fixed full-viewport R3F `<Canvas>` defaulted to `pointer-events:auto`, so wheel/pointer events hit the canvas (and its raycaster) *before* the scroll container. **Fix:** `Canvas style={{ pointerEvents: "none" }}` — events pass straight to the scroller. (Rig hover uses a `window` listener, not R3F events, so nothing lost. This ALSO unblocked the new interactive board, which the canvas was covering.)
+  2. The scroll gate listener did layout reads + style writes every event (forced reflow on the scroll thread; first event after idle is heaviest). **Fix:** rAF-throttled, `clientHeight` cached (resize-updated), opacity written only on change.
+  - Plus `<AdaptiveDpr/>` + `performance={{ min: 0.5 }}` + `dpr [1,1.2]` → resolution drops during scroll/jank on high-DPI, restores when idle.
+- **Backdrop → `HeroBackdrop.tsx`:** 96-cell CSS chessboard floor (real divs, not a tiled gradient) that twinkle on staggered random clocks (gold on light squares, brown on dark) and turn gold on `:hover`; waveform now flows (`translateX` marquee, 2 copies) + breathes (`scaleY`). All gated by `prefers-reduced-motion`.
+
 ## Verify
 
-- `npm run dev -- --host 127.0.0.1 --port 3003`, open `/?hook=0`. Confirmed headless: warm designed bg + Fraunces type, pieces grounded on the board, scroll flank works, 7 snap children, no console errors. (High-DPI scroll smoothness to confirm on the user's machine.)
+- `npm run dev -- --host 127.0.0.1 --port 3003`, open `/?hook=0`. Confirmed headless: warm bg + Fraunces, twinkle anim running (`animationName hb-twinkle`), board layer now receives pointer events (canvas no longer intercepts), 7 snap children, no console errors. **High-DPI scroll smoothness still to confirm on the user's machine** (the dev box is dpr 1).

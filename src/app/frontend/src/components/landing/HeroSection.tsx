@@ -3,11 +3,12 @@
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Canvas } from "@react-three/fiber";
-import { Environment } from "@react-three/drei";
+import { Environment, AdaptiveDpr } from "@react-three/drei";
 import * as THREE from "three";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ChessHeroRig, type ChessRigRefs } from "@/components/three/ChessHeroRig";
+import { HeroBackdrop } from "./HeroBackdrop";
 
 gsap.registerPlugin(useGSAP);
 
@@ -50,23 +51,47 @@ export function HeroSection({ containerRef }: { containerRef: React.RefObject<HT
     setReady(true);
   }, []);
 
-  // Cheap scroll gate: keep the render loop + canvas alive only while the pieces
-  // are in play, and never run GSAP ScrollTrigger on the custom snap scroller.
+  // Scroll gate: keep the render loop + canvas alive only while the pieces are in
+  // play. Kept dirt-cheap — rAF-throttled, viewport height cached (no per-event
+  // layout read), opacity written only on change — so the scroll thread never
+  // stalls on a forced reflow (the cause of stop/start jank on native scroll).
   useEffect(() => {
     const c = containerRef.current;
     if (!c) return;
-    const onScroll = () => {
-      const p = c.scrollTop / (c.clientHeight * 1.85);
-      if (stageRef.current) stageRef.current.style.opacity = p < 1 ? "1" : String(Math.max(0, 1 - (p - 1) * 4));
+    let vh = c.clientHeight;
+    let lastOpacity = -1;
+    let ticking = false;
+
+    const apply = () => {
+      ticking = false;
+      const p = c.scrollTop / (vh * 1.85);
+      const o = p < 1 ? 1 : Math.max(0, 1 - (p - 1) * 4);
+      if (stageRef.current && Math.abs(o - lastOpacity) > 0.01) {
+        stageRef.current.style.opacity = String(o);
+        lastOpacity = o;
+      }
       const active = p < 1.05;
       if (active !== stageActiveRef.current) {
         stageActiveRef.current = active;
         setStageActive(active);
       }
     };
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(apply);
+      }
+    };
+    const onResize = () => {
+      vh = c.clientHeight;
+    };
     c.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => c.removeEventListener("scroll", onScroll);
+    window.addEventListener("resize", onResize);
+    apply();
+    return () => {
+      c.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onResize);
+    };
   }, [containerRef]);
 
   // Entrance only (idle / parallax / hover / scroll choreography live in the rig).
@@ -95,12 +120,14 @@ export function HeroSection({ containerRef }: { containerRef: React.RefObject<HT
                 toneMapping: THREE.ACESFilmicToneMapping,
                 toneMappingExposure: 1.22,
               }}
-              style={{ background: "transparent" }}
-              dpr={[1, 1.4]}
+              style={{ background: "transparent", pointerEvents: "none" }}
+              dpr={[1, 1.2]}
+              performance={{ min: 0.5 }}
               frameloop={stageActive ? "always" : "never"}
               onCreated={({ camera }) => camera.lookAt(0, 0.6, 0)}
             >
               <Suspense fallback={null}>
+                <AdaptiveDpr />
                 <Lighting />
                 <Environment preset="city" background={false} />
                 <ChessHeroRig refs={refs.current} containerRef={containerRef} onReady={handleReady} />
@@ -121,38 +148,9 @@ export function HeroSection({ containerRef }: { containerRef: React.RefObject<HT
         style={{ background: "radial-gradient(115% 100% at 80% 28%, #1c1712 0%, #15110d 38%, #0c0a08 78%)" }}
       >
         {/* warm depth + brand motifs (behind the portalled pieces) */}
-        <div className="absolute inset-0 pointer-events-none">
-          {/* receding chessboard floor — echoes the reference */}
-          <div className="absolute inset-x-0 bottom-0 h-[58%] opacity-[0.16]" style={{ perspective: "640px", perspectiveOrigin: "50% 0%" }}>
-            <div
-              className="absolute inset-0 origin-top"
-              style={{
-                transform: "rotateX(71deg)",
-                backgroundImage:
-                  "linear-gradient(45deg, rgba(201,168,76,0.5) 25%, transparent 25% 75%, rgba(201,168,76,0.5) 75%)," +
-                  "linear-gradient(45deg, rgba(201,168,76,0.5) 25%, transparent 25% 75%, rgba(201,168,76,0.5) 75%)",
-                backgroundSize: "64px 64px",
-                backgroundPosition: "0 0, 32px 32px",
-                maskImage: "linear-gradient(to top, rgba(0,0,0,0.9), transparent 72%)",
-                WebkitMaskImage: "linear-gradient(to top, rgba(0,0,0,0.9), transparent 72%)",
-              }}
-            />
-          </div>
-          {/* gold commentary waveform behind the pieces */}
-          <svg className="absolute right-0 top-1/2 -translate-y-1/2 w-[64%] h-44 opacity-[0.14]" viewBox="0 0 600 120" preserveAspectRatio="none" fill="none">
-            <path
-              d="M0 60 C 40 60 50 22 80 22 S 120 60 150 60 130 96 175 96 205 30 235 30 260 60 300 60 320 14 350 14 380 60 410 60 430 92 460 92 488 36 520 36 545 60 600 60"
-              stroke="#c9a84c"
-              strokeWidth="1.4"
-              strokeLinecap="round"
-            />
-          </svg>
-          {/* left vignette keeps the copy crisp over the warm field */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0b0908]/85 via-[#0b0908]/10 to-transparent" />
-          <div className="absolute inset-0" style={{ boxShadow: "inset 0 -120px 140px -60px rgba(0,0,0,0.7), inset 0 90px 120px -70px rgba(0,0,0,0.6)" }} />
-        </div>
+        <HeroBackdrop />
 
-        <div className="relative z-40 h-full max-w-[1400px] mx-auto w-full px-8 md:px-14 lg:px-20 grid grid-cols-1 md:grid-cols-12 items-center">
+        <div className="relative z-40 h-full max-w-[1400px] mx-auto w-full px-8 md:px-14 lg:px-20 grid grid-cols-1 md:grid-cols-12 items-center pointer-events-none">
           <div className="md:col-span-7 lg:col-span-6 pointer-events-auto">
             <div className="flex items-center gap-3 mb-7">
               <span className="relative flex h-1.5 w-1.5">
