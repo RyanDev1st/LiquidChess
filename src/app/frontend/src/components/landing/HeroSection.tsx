@@ -70,31 +70,23 @@ export function HeroSection({ containerRef }: { containerRef: React.RefObject<HT
       const mm = gsap.matchMedia();
 
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        // ---- Idle: float + sway on the inner groups (independent of scroll) ----
-        const floats: Array<[THREE.Group | null, number, number]> = [
-          [r.kingInner.current, 0.035, 3.2],
-          [r.queenInner.current, 0.045, 3.6],
-          [r.micInner.current, 0.06, 2.4],
-        ];
-        floats.forEach(([g, amp, dur]) => {
-          if (g) gsap.to(g.position, { y: amp, duration: dur, ease: "sine.inOut", repeat: -1, yoyo: true });
-        });
-        if (r.kingInner.current)
-          gsap.to(r.kingInner.current.rotation, { y: 0.05, duration: 5, ease: "sine.inOut", repeat: -1, yoyo: true });
-        if (r.queenInner.current)
-          gsap.to(r.queenInner.current.rotation, { y: -0.06, duration: 4.4, ease: "sine.inOut", repeat: -1, yoyo: true });
-        if (r.micInner.current)
-          gsap.to(r.micInner.current.rotation, { z: 0.18, duration: 3.8, ease: "sine.inOut", repeat: -1, yoyo: true });
+        // ---- Entrance: the cluster rises into place on load (idle + parallax
+        // + hover live in ChessHeroRig's useFrame on the root/inner groups). ----
+        const root = r.root.current;
+        if (root) {
+          gsap.from(root.position, { y: -0.75, duration: 1.25, ease: "power3.out" });
+          gsap.from(root.scale, { x: 0.9, y: 0.9, z: 0.9, duration: 1.25, ease: "power3.out" });
+        }
 
         // ---- Scroll: cluster → split + flank → exit (scrubbed to scroll) ----
         const tl = gsap.timeline({
-          defaults: { ease: "power1.inOut" },
+          defaults: { ease: "power2.inOut" },
           scrollTrigger: {
             scroller,
             trigger: hero,
             start: "top top",
             end: "+=185%",
-            scrub: 1,
+            scrub: 0.8,
             invalidateOnRefresh: true,
             onUpdate: (self) => {
               const active = self.progress < 0.99;

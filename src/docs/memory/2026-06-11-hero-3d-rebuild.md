@@ -37,6 +37,19 @@ User feedback: "won't scroll", "~5fps laggier", "ugly despite the 3d models". Ap
 - **Lag:** the `HeroVideoFrames` stream used `mix-blend-screen` over the full viewport (per-frame GPU composite) + 6 per-frame `requestAnimationFrame` style writers, on top of `dpr` up to 1.75. **Fix: dropped the blend stream from the hero, `dpr [1,1.4]`, 5→4 lights.** `HeroVideoFrames.tsx` kept for later, no longer imported.
 - **Ugly:** centered hero with copy overlapping the pieces. **Fix: split layout** — serif copy + gold CTA left, pieces clustered right (`LAYOUT` x's now positive); charcoal `#0a0a0c` not pure black; removed the neon drop-shadow glow on the headline; added eval-bar tags. Rest layout + scroll targets retuned (King sweeps from right cluster to far-left flank).
 
+## Animation/interaction redesign (3rd pass)
+
+User: "clanky and not pretty", asked about a non-JS "engine" → confirmed staying in **R3F/three.js** (the right tool; Unity/Godot/WebGPU would be a heavier rewrite for no gain). Audit found the pieces had **zero cursor interaction** (canvas `pointer-events:none`), single-axis yoyo idle, 1s scrub lag, stock `MeshStandard`, and popped in.
+
+Redesign (all in `ChessHeroRig.tsx` + `HeroSection.tsx`):
+- **3-tier groups**: root = entrance + parallax, outer = scroll (GSAP), inner = idle + hover. No transform-channel conflicts.
+- **Cursor parallax**: a `window` pointermove (canvas stays `pointer-events:none`) drives a damped root rotation in `useFrame`.
+- **Proximity hover**: each piece's centre is projected to screen; cursor within ~0.22 NDC lifts it + ramps a gold emissive — cheap, no per-frame mesh raycast (132k tris each would be too slow).
+- **Organic idle**: layered phase-offset sines per piece in the same `useFrame`.
+- **Entrance**: GSAP rise + scale-overshoot on the root on load.
+- **Materials**: `MeshStandard` → `MeshPhysicalMaterial` with clearcoat (glazed-ceramic sheen).
+- **Scroll**: `scrub` 1 → 0.8 (tighter). All continuous motion gated by `prefers-reduced-motion`.
+
 ## Verify
 
-- `npm run dev -- --host 127.0.0.1 --port 3003`, open `/?hook=0`. Confirmed via headless browser: rest (split layout, both pieces read), scroll works + flank, exit+fade, scroll-up return, 7 snap children, no console errors.
+- `npm run dev -- --host 127.0.0.1 --port 3003`, open `/?hook=0`. Confirmed via headless browser: rest (split, both pieces read, glossy), entrance, cursor parallax + hover glow (dispatched pointermove), scroll flank + exit/return, 7 snap children, no console errors.
