@@ -43,6 +43,7 @@ export default {
       fontFamily: {
         sans: ["Inter", "system-ui", "-apple-system", "sans-serif"],
         serif: ["Instrument Serif", "serif"],
+        display: ["Fraunces", "Instrument Serif", "Georgia", "serif"],
         mono: ["JetBrains Mono", "monospace"],
       },
       boxShadow: {

@@ -50,6 +50,17 @@ Redesign (all in `ChessHeroRig.tsx` + `HeroSection.tsx`):
 - **Materials**: `MeshStandard` → `MeshPhysicalMaterial` with clearcoat (glazed-ceramic sheen).
 - **Scroll**: `scrub` 1 → 0.8 (tighter). All continuous motion gated by `prefers-reduced-motion`.
 
+## Taste pass + scroll-stall fix (4th pass)
+
+User: scroll "sometimes stops while pieces are in frame, sometimes smooth"; "entirely black isn't it"; "typography is boring"; "have taste", and "we aren't utilizing the pieces enough across the whole site".
+
+- **Scroll stall (root cause):** GSAP **ScrollTrigger** with `scrub` on the *custom snap-container scroller* is unreliable — it intermittently fought native scroll, and heavy render on high-DPI (the dev box is dpr 1, so headless hit 139fps and hid it) starved the scroll. **Fix: removed ScrollTrigger entirely.** Choreography now reads `containerRef.scrollTop` directly in the rig's `useFrame` and damps to phase targets; a cheap passive scroll listener gates `frameloop`/opacity. GSAP now only does the entrance.
+- **Perf:** leaner GLB re-export (~62k tris, 0.9 MB, was 132k/1.35 MB), dropped clearcoat (`MeshPhysical`→`MeshStandard`), `dpr [1,1.4]`.
+- **Background (not black):** warm radial gradient + receding CSS chessboard floor + gold commentary-waveform SVG + vignette.
+- **Typography:** added **Fraunces** (variable display, `tailwind font-display`); headline "The game / *speaks.*" with characterful italic gold `WONK` axis; live dot, eval read-out, scroll cue.
+- **Choreography** retuned as damped keyframes (`KEYS` rest→split→exit) with rotation; reads scroll, frame-rate independent.
+- **Still open:** pieces only span hero→voiceshowcase. "Use across the whole site" (per-section beats through demo/testimonials/CTA) is a deliberate next pass — deferred to protect the just-stabilized perf/scroll.
+
 ## Verify
 
-- `npm run dev -- --host 127.0.0.1 --port 3003`, open `/?hook=0`. Confirmed via headless browser: rest (split, both pieces read, glossy), entrance, cursor parallax + hover glow (dispatched pointermove), scroll flank + exit/return, 7 snap children, no console errors.
+- `npm run dev -- --host 127.0.0.1 --port 3003`, open `/?hook=0`. Confirmed headless: warm designed bg + Fraunces type, pieces grounded on the board, scroll flank works, 7 snap children, no console errors. (High-DPI scroll smoothness to confirm on the user's machine.)

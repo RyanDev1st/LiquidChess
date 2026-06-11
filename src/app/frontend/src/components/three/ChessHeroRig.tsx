@@ -8,12 +8,6 @@ import * as THREE from "three";
 const MODEL_URL = "/models/chess-hero.glb";
 const GOLD = new THREE.Color("#c9a84c");
 
-/**
- * Group refs the hero uses to choreograph the pieces.
- * - `root`  : entrance + cursor parallax (rotation only).
- * - `outer` : scroll-driven (separation / flank / exit) — owned by GSAP.
- * - `inner` : idle float/sway + hover lift — owned by this rig's useFrame.
- */
 export interface ChessRigRefs {
   root: React.RefObject<THREE.Group>;
   kingOuter: React.RefObject<THREE.Group>;
@@ -24,49 +18,46 @@ export interface ChessRigRefs {
   micInner: React.RefObject<THREE.Group>;
 }
 
-// Rest layout (progress 0): pieces cluster in the RIGHT half so the editorial
-// copy owns the left. Origins are at each piece's base (feet on y = 0).
-const LAYOUT = {
-  king: { x: 0.35, y: 0, z: 0.35, ry: 0.26 },
-  queen: { x: 1.5, y: 0, z: -0.15, ry: -0.4 },
-  mic: { x: 2.25, y: 0.5, z: 0.1, ry: -0.35 },
-};
+// Rest layout (progress 0): pieces cluster RIGHT so the editorial copy owns the
+// left. `split`/`exit` are the keyframe targets the scroll choreography drives to.
+const KEYS = {
+  king: { rest: { x: 0.35, y: 0, z: 0.35, ry: 0.26, s: 1 }, split: { x: -2.9, y: 0.1, z: 0, ry: -0.08, s: 1 }, exitX: -9 },
+  queen: { rest: { x: 1.5, y: 0, z: -0.15, ry: -0.4, s: 1 }, split: { x: 3.0, y: 0.18, z: 0.3, ry: 0.06, s: 1.18 }, exitX: 9.5 },
+  mic: { rest: { x: 2.25, y: 0.5, z: 0.1, ry: -0.35, s: 1 }, split: { x: 3.6, y: 0.85, z: 0.1, ry: -0.2, s: 1 }, exitX: 10.5 },
+} as const;
 
-function toPhysical(src: THREE.Material): THREE.MeshPhysicalMaterial {
-  const s = src as THREE.MeshStandardMaterial;
-  const m = new THREE.MeshPhysicalMaterial({
-    map: s.map ?? null,
-    normalMap: s.normalMap ?? null,
-    roughnessMap: s.roughnessMap ?? null,
-    metalnessMap: s.metalnessMap ?? null,
-    color: s.color ?? new THREE.Color(0xffffff),
-    metalness: s.metalness ?? 0,
-    roughness: s.roughness ?? 0.5,
-  });
-  // Glazed-ceramic sheen from the reference + a gold emissive used by hover.
-  m.clearcoat = 0.7;
-  m.clearcoatRoughness = 0.25;
-  m.envMapIntensity = 1.35;
+const smooth = (a: number, b: number, t: number) => {
+  const k = THREE.MathUtils.clamp((t - a) / (b - a), 0, 1);
+  return k * k * (3 - 2 * k);
+};
+const lerp = THREE.MathUtils.lerp;
+
+function tuneMaterial(src: THREE.Material): THREE.Material {
+  const m = (src as THREE.MeshStandardMaterial).clone() as THREE.MeshStandardMaterial;
+  m.envMapIntensity = 1.45;
   m.emissive = GOLD.clone();
   m.emissiveIntensity = 0;
   m.transparent = true;
   m.opacity = 1;
+  m.needsUpdate = true;
   return m;
 }
 
 interface PieceData {
+  outer: React.RefObject<THREE.Group>;
   inner: React.RefObject<THREE.Group>;
-  object: THREE.Object3D;
-  materials: THREE.MeshPhysicalMaterial[];
-  center: THREE.Vector3; // local offset of visual centre from base origin
-  hover: number; // damped 0..1
+  materials: THREE.MeshStandardMaterial[];
+  center: THREE.Vector3;
+  hover: number;
 }
 
 export function ChessHeroRig({
   refs,
+  containerRef,
   onReady,
 }: {
   refs: ChessRigRefs;
+  containerRef: React.RefObject<HTMLElement>;
   onReady?: (materials: THREE.Material[]) => void;
 }) {
   const { camera } = useThree();
@@ -81,16 +72,14 @@ export function ChessHeroRig({
   const model = useMemo(() => {
     const cloned = gltf.clone(true);
     const pick = (n: string) => cloned.getObjectByName(n) as THREE.Object3D | undefined;
-    const out: { king?: THREE.Object3D; queen?: THREE.Object3D; mic?: THREE.Object3D; mats: THREE.Material[] } = {
-      mats: [],
-    };
+    const out: { king?: THREE.Object3D; queen?: THREE.Object3D; mic?: THREE.Object3D; mats: THREE.Material[] } = { mats: [] };
     (["King", "Queen", "Mic"] as const).forEach((name) => {
       const o = pick(name);
       if (!o) return;
       o.position.set(0, 0, 0);
       o.rotation.set(0, 0, 0);
       o.scale.setScalar(1);
-      const mats: THREE.MeshPhysicalMaterial[] = [];
+      const mats: THREE.MeshStandardMaterial[] = [];
       const box = new THREE.Box3();
       o.traverse((c) => {
         const mesh = c as THREE.Mesh;
@@ -98,26 +87,21 @@ export function ChessHeroRig({
         mesh.frustumCulled = false;
         mesh.geometry.computeBoundingBox();
         if (mesh.geometry.boundingBox) box.union(mesh.geometry.boundingBox);
-        if (Array.isArray(mesh.material)) mesh.material = mesh.material.map(toPhysical);
-        else mesh.material = toPhysical(mesh.material);
-        (Array.isArray(mesh.material) ? mesh.material : [mesh.material]).forEach((mm) =>
-          mats.push(mm as THREE.MeshPhysicalMaterial),
-        );
+        mesh.material = Array.isArray(mesh.material) ? mesh.material.map(tuneMaterial) : tuneMaterial(mesh.material);
+        (Array.isArray(mesh.material) ? mesh.material : [mesh.material]).forEach((mm) => mats.push(mm as THREE.MeshStandardMaterial));
       });
-      const center = box.isEmpty() ? new THREE.Vector3() : box.getCenter(new THREE.Vector3());
       out.mats.push(...mats);
       const key = name.toLowerCase() as "king" | "queen" | "mic";
       out[key] = o;
       pieceData[key] = {
+        outer: key === "king" ? refs.kingOuter : key === "queen" ? refs.queenOuter : refs.micOuter,
         inner: key === "king" ? refs.kingInner : key === "queen" ? refs.queenInner : refs.micInner,
-        object: o,
         materials: mats,
-        center,
+        center: box.isEmpty() ? new THREE.Vector3() : box.getCenter(new THREE.Vector3()),
         hover: 0,
       };
     });
     return out;
-    // pieceData is a stable ref container; refs identity is stable.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gltf]);
 
@@ -125,16 +109,12 @@ export function ChessHeroRig({
     onReady?.(model.mats);
   }, [model, onReady]);
 
-  // Track the cursor globally — the canvas is pointer-events:none, so the DOM
-  // stays clickable while the pieces still react to the mouse.
   useEffect(() => {
     const onMove = (e: PointerEvent) => {
       mouse.current.set((e.clientX / window.innerWidth) * 2 - 1, -(e.clientY / window.innerHeight) * 2 + 1);
       mouseActive.current = true;
     };
-    const onLeave = () => {
-      mouseActive.current = false;
-    };
+    const onLeave = () => (mouseActive.current = false);
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     reduced.current = mq.matches;
     const onPref = () => (reduced.current = mq.matches);
@@ -149,57 +129,85 @@ export function ChessHeroRig({
   }, []);
 
   useFrame((state, delta) => {
-    if (reduced.current) return;
-    const t = state.clock.elapsedTime;
     const d = Math.min(delta, 0.05);
+    const el = containerRef.current;
+    const range = el ? el.clientHeight * 1.85 : 1;
+    const p = el ? el.scrollTop / range : 0;
 
-    // --- Cursor parallax on the root (rotation only; entrance owns position) ---
+    // progress phases
+    const splitT = smooth(0.08, 0.55, p);
+    const exitT = smooth(0.6, 1.0, p);
+    const fade = 1 - smooth(0.7, 0.98, p);
+
+    // Reduced motion: hold still, only fade out on scroll.
+    if (reduced.current) {
+      Object.values(pieceData).forEach((pd) => pd.materials.forEach((m) => (m.emissiveIntensity = 0, (m.opacity = fade))));
+      return;
+    }
+
+    const t = state.clock.elapsedTime;
+
+    // Cursor parallax on the root (rotation only).
     if (refs.root.current) {
       const mx = mouseActive.current ? mouse.current.x : 0;
       const my = mouseActive.current ? mouse.current.y : 0;
-      refs.root.current.rotation.y = THREE.MathUtils.damp(refs.root.current.rotation.y, mx * 0.2, 3.5, d);
-      refs.root.current.rotation.x = THREE.MathUtils.damp(refs.root.current.rotation.x, -my * 0.1, 3.5, d);
+      refs.root.current.rotation.y = THREE.MathUtils.damp(refs.root.current.rotation.y, mx * 0.18 + p * 0.15, 3.5, d);
+      refs.root.current.rotation.x = THREE.MathUtils.damp(refs.root.current.rotation.x, -my * 0.09, 3.5, d);
     }
 
-    // --- Organic idle (layered sines) + hover lift on the inner groups ---
     const idle = {
       king: { y: Math.sin(t * 0.7) * 0.022 + Math.sin(t * 1.3 + 1) * 0.008, ry: Math.sin(t * 0.5) * 0.04, rz: Math.sin(t * 0.4 + 2) * 0.012 },
       queen: { y: Math.sin(t * 0.62 + 0.8) * 0.03, ry: Math.sin(t * 0.45 + 1) * -0.05, rz: Math.sin(t * 0.5) * 0.01 },
       mic: { y: Math.sin(t * 1.05) * 0.04, ry: 0, rz: Math.sin(t * 0.9) * 0.2 },
     };
 
-    (Object.keys(idle) as Array<keyof typeof idle>).forEach((key) => {
+    (Object.keys(KEYS) as Array<keyof typeof KEYS>).forEach((key) => {
+      const k = KEYS[key];
       const pd = pieceData[key];
-      const g = pd?.inner.current;
-      if (!g) return;
+      const outer = pd?.outer.current;
+      const inner = pd?.inner.current;
+      if (!pd || !outer || !inner) return;
+
+      // scroll choreography: rest -> split (flank) -> exit, layered + damped
+      let tx = lerp(k.rest.x, k.split.x, splitT);
+      tx = lerp(tx, k.exitX, exitT);
+      const ty = lerp(k.rest.y, k.split.y, splitT);
+      const tz = lerp(k.rest.z, k.split.z, splitT);
+      const ts = lerp(k.rest.s, k.split.s, splitT);
+      const trot = lerp(k.rest.ry, k.split.ry, splitT);
+      outer.position.x = THREE.MathUtils.damp(outer.position.x, tx, 6, d);
+      outer.position.y = THREE.MathUtils.damp(outer.position.y, ty, 6, d);
+      outer.position.z = THREE.MathUtils.damp(outer.position.z, tz, 6, d);
+      outer.rotation.y = THREE.MathUtils.damp(outer.rotation.y, trot, 6, d);
+      const sc = THREE.MathUtils.damp(outer.scale.x, ts, 6, d);
+      outer.scale.setScalar(sc);
 
       // hover via cheap screen-space proximity (no per-frame mesh raycast)
-      let target = 0;
-      proj.current.copy(pd.center).applyMatrix4(g.matrixWorld).project(camera);
+      proj.current.copy(pd.center).applyMatrix4(inner.matrixWorld).project(camera);
       const dist = Math.hypot(proj.current.x - mouse.current.x, proj.current.y - mouse.current.y);
-      if (mouseActive.current && dist < 0.22) target = 1 - dist / 0.22;
+      const target = mouseActive.current && dist < 0.22 && p < 0.4 ? 1 - dist / 0.22 : 0;
       pd.hover = THREE.MathUtils.damp(pd.hover, target, 6, d);
 
-      g.position.y = idle[key].y + pd.hover * 0.06;
-      g.rotation.y = idle[key].ry;
-      g.rotation.z = idle[key].rz;
-      const s = 1 + pd.hover * 0.05;
-      g.scale.setScalar(s);
-      pd.materials.forEach((m) => (m.emissiveIntensity = pd.hover * 0.45));
+      inner.position.y = idle[key].y + pd.hover * 0.06;
+      inner.rotation.y = idle[key].ry;
+      inner.rotation.z = idle[key].rz;
+      inner.scale.setScalar(1 + pd.hover * 0.05);
+      pd.materials.forEach((m) => {
+        m.emissiveIntensity = pd.hover * 0.5;
+        m.opacity = fade;
+      });
     });
   });
 
   return (
     <group ref={refs.root}>
-      <group ref={refs.kingOuter} position={[LAYOUT.king.x, LAYOUT.king.y, LAYOUT.king.z]} rotation={[0, LAYOUT.king.ry, 0]}>
+      <group ref={refs.kingOuter} position={[KEYS.king.rest.x, KEYS.king.rest.y, KEYS.king.rest.z]} rotation={[0, KEYS.king.rest.ry, 0]}>
         <group ref={refs.kingInner}>{model.king && <primitive object={model.king} />}</group>
       </group>
-
-      <group ref={refs.queenOuter} position={[LAYOUT.queen.x, LAYOUT.queen.y, LAYOUT.queen.z]} rotation={[0, LAYOUT.queen.ry, 0]}>
+      <group ref={refs.queenOuter} position={[KEYS.queen.rest.x, KEYS.queen.rest.y, KEYS.queen.rest.z]} rotation={[0, KEYS.queen.rest.ry, 0]}>
         <group ref={refs.queenInner}>{model.queen && <primitive object={model.queen} />}</group>
       </group>
-
-      <group ref={refs.micOuter} position={[LAYOUT.mic.x, LAYOUT.mic.y, LAYOUT.mic.z]} rotation={[0, LAYOUT.mic.ry, 0]}>
+      <group ref={refs.micOuter} position={[KEYS.mic.rest.x, KEYS.mic.rest.y, KEYS.mic.rest.z]} rotation={[0, KEYS.mic.rest.ry, 0]}>
         <group ref={refs.micInner}>{model.mic && <primitive object={model.mic} />}</group>
       </group>
     </group>
