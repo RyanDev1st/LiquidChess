@@ -1,13 +1,15 @@
 "use client";
 
 import { Suspense, useState } from "react";
+import { WorldHero } from "./WorldHero";
 import { EmergenceHero } from "./EmergenceHero";
 import { AwarenessHero } from "./AwarenessHero";
 import { HandHero } from "./HandHero";
 
-type Variant = "emergence" | "awareness" | "hand";
+type Variant = "world" | "emergence" | "awareness" | "hand";
 
 const VARIANTS: Array<[Variant, string, string]> = [
+  ["world", "◆ The World", "Immersive cinematic world · fog · god-rays · scale"],
   ["emergence", "① Emergence", "Rise from a gold pool · hover ripples · tap to ripple"],
   ["awareness", "② Awareness", "They turn to face you · track cursor · click to speak"],
   ["hand", "③ The Hand", "Tilt the diorama · drag-orbit · hover lifts a piece"],
@@ -15,7 +17,7 @@ const VARIANTS: Array<[Variant, string, string]> = [
 
 function initialVariant(): Variant {
   const v = new URLSearchParams(window.location.search).get("proto");
-  return (VARIANTS.find(([id]) => id === v)?.[0] ?? "emergence") as Variant;
+  return (VARIANTS.find(([id]) => id === v)?.[0] ?? "world") as Variant;
 }
 
 function HeroCopy() {
@@ -58,12 +60,14 @@ export function HeroPrototypes() {
   return (
     <div className="fixed inset-0 overflow-hidden" style={{ background: "#08070a" }}>
       <Suspense fallback={null}>
+        {variant === "world" && <WorldHero />}
         {variant === "emergence" && <EmergenceHero />}
         {variant === "awareness" && <AwarenessHero />}
         {variant === "hand" && <HandHero />}
       </Suspense>
 
-      <HeroCopy />
+      {/* World ships its own cinematic UI; others use the shared copy block */}
+      {variant !== "world" && <HeroCopy />}
 
       <div className="fixed top-5 left-1/2 -translate-x-1/2 z-[100] flex flex-col items-center gap-2">
         <div className="flex gap-1 rounded-full border border-white/10 bg-black/50 p-1 backdrop-blur">
