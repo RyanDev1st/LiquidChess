@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useState } from "react";
+import { WorldHero } from "./WorldHero";
 import { FusionHero } from "./FusionHero";
 import { SplitFlapHero } from "./SplitFlapHero";
 import { BroadsheetHero } from "./BroadsheetHero";
@@ -10,10 +11,11 @@ import { DuelHero } from "./DuelHero";
 import { VersusHero } from "./VersusHero";
 import { EclipseHero } from "./EclipseHero";
 
-type Variant = "fusion" | "duel" | "versus" | "eclipse" | "splitflap" | "broadsheet" | "scrub" | "schematic";
+type Variant = "world" | "fusion" | "duel" | "versus" | "eclipse" | "splitflap" | "broadsheet" | "scrub" | "schematic";
 
 const VARIANTS: Array<[Variant, string]> = [
-  ["fusion", "★ Fusion"],
+  ["world", "★ World"],
+  ["fusion", "Fusion"],
   ["duel", "Duel"],
   ["versus", "Versus"],
   ["eclipse", "Eclipse"],
@@ -25,7 +27,7 @@ const VARIANTS: Array<[Variant, string]> = [
 
 function initialVariant(): Variant {
   const v = new URLSearchParams(window.location.search).get("proto");
-  return (VARIANTS.find(([id]) => id === v)?.[0] ?? "fusion") as Variant;
+  return (VARIANTS.find(([id]) => id === v)?.[0] ?? "world") as Variant;
 }
 
 export function HeroPrototypes() {
@@ -33,6 +35,7 @@ export function HeroPrototypes() {
   return (
     <div className="fixed inset-0 overflow-hidden bg-black">
       <Suspense fallback={null}>
+        {variant === "world" && <WorldHero />}
         {variant === "fusion" && <FusionHero />}
         {variant === "duel" && <DuelHero />}
         {variant === "versus" && <VersusHero />}
