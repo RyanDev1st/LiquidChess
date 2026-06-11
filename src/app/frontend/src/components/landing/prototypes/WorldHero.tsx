@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Environment, Lightformer, useGLTF } from "@react-three/drei";
+import { Environment, Lightformer, useGLTF, Html } from "@react-three/drei";
 import { EffectComposer, Bloom, DepthOfField, Vignette, Noise, GodRays, SMAA } from "@react-three/postprocessing";
 import { BlendFunction } from "postprocessing";
 import * as THREE from "three";
@@ -35,16 +35,91 @@ function dissolve(base: THREE.MeshStandardMaterial, uni: { uProgress: { value: n
   return base;
 }
 
+const SPEAK = ["Sharp.", "Bold.", "Brilliant!", "Check.", "He's hunting.", "Risky…"];
+
+// Per-piece tactile interaction: hover lifts + scales + glows + emits soundwave
+// rings; click makes it "speak" a word with a ring burst. Accurate raycast hover.
+function InteractivePiece({
+  data,
+  position,
+  rotationY,
+  role,
+}: {
+  data: { o: THREE.Object3D | null; mats: THREE.MeshStandardMaterial[] };
+  position: [number, number, number];
+  rotationY: number;
+  role: string;
+}) {
+  const wrap = useRef<THREE.Group>(null);
+  const rings = useRef<Array<THREE.Mesh | null>>([]);
+  const hover = useRef(0);
+  const burst = useRef(0);
+  const [word, setWord] = useState<{ w: string; id: number } | null>(null);
+  const [hovered, setHovered] = useState(false);
+
+  useFrame((state, delta) => {
+    const d = Math.min(delta, 0.05);
+    const t = state.clock.elapsedTime;
+    const w = wrap.current;
+    if (!w) return;
+    // hover: lift + scale + emissive
+    w.position.y = position[1] + hover.current * 0.14 + Math.sin(t * 0.5) * 0.03;
+    const s = 1 + hover.current * 0.04;
+    w.scale.setScalar(s);
+    data.mats.forEach((m) => (m.emissiveIntensity = hover.current * 0.85 + burst.current * 1.2));
+    burst.current = Math.max(0, burst.current - d * 1.5);
+    // soundwave rings — animate while hovered or bursting
+    const energy = Math.max(hover.current, burst.current);
+    rings.current.forEach((ring, i) => {
+      if (!ring) return;
+      const k = (t * 0.6 + i * 0.34) % 1;
+      ring.scale.setScalar(0.5 + k * 2.4);
+      (ring.material as THREE.MeshBasicMaterial).opacity = (1 - k) * 0.5 * energy;
+    });
+  });
+
+  const speak = () => {
+    burst.current = 1;
+    setWord({ w: SPEAK[Math.floor((performance.now() / 311) % SPEAK.length)], id: Math.floor(performance.now()) });
+  };
+
+  return (
+    <group
+      ref={wrap}
+      position={position}
+      rotation={[0, rotationY, 0]}
+      onPointerOver={(e) => { e.stopPropagation(); hover.current = 1; setHovered(true); document.body.style.cursor = "pointer"; }}
+      onPointerOut={(e) => { e.stopPropagation(); hover.current = 0; setHovered(false); document.body.style.cursor = "auto"; }}
+      onPointerDown={(e) => { e.stopPropagation(); speak(); }}
+    >
+      {data.o && <primitive object={data.o} />}
+      {/* soundwave rings at the base */}
+      {[0, 1, 2].map((i) => (
+        <mesh key={i} ref={(el) => (rings.current[i] = el)} rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.55, 0]}>
+          <ringGeometry args={[0.42, 0.5, 56]} />
+          <meshBasicMaterial color="#ffcf6a" transparent opacity={0} blending={THREE.AdditiveBlending} depthWrite={false} toneMapped={false} />
+        </mesh>
+      ))}
+      {/* spoken word on click + a persistent role tag while hovered */}
+      {word && (
+        <Html position={[0, 1.5, 0]} center style={{ pointerEvents: "none" }}>
+          <div key={word.id} className="font-display italic text-2xl whitespace-nowrap" style={{ color: "#ffcf6a", textShadow: "0 2px 18px rgba(0,0,0,0.8)", animation: "whSpeak 1.3s ease-out forwards" }}>
+            {word.w}
+          </div>
+        </Html>
+      )}
+      <Html position={[0, -0.9, 0]} center style={{ pointerEvents: "none" }}>
+        <div className="font-mono text-[9px] uppercase tracking-[0.3em] text-white/60 whitespace-nowrap transition-opacity duration-300" style={{ opacity: hovered ? 1 : 0 }}>{role}</div>
+      </Html>
+    </group>
+  );
+}
+
 function Monoliths() {
   const { scene } = useGLTF(MODEL_URL);
-  const { camera } = useThree();
   const grp = useRef<THREE.Group>(null);
-  const kRef = useRef<THREE.Group>(null);
-  const qRef = useRef<THREE.Group>(null);
   const mouse = useRef(new THREE.Vector2());
-  const proj = useRef(new THREE.Vector3());
   const uni = useMemo(() => ({ uProgress: { value: 0 }, uEdge: { value: 0.07 }, uFreq: { value: 4.0 } }), []);
-  const hov = useRef({ King: 0, Queen: 0 });
 
   const built = useMemo(() => {
     const mk = (name: string) => {
@@ -83,26 +158,15 @@ function Monoliths() {
     uni.uProgress.value = Math.min(1.05, uni.uProgress.value + delta / 2.3);
     mouse.current.lerp(state.pointer, 0.05);
     if (grp.current) {
-      grp.current.rotation.y = THREE.MathUtils.damp(grp.current.rotation.y, mouse.current.x * 0.14 + Math.sin(t * 0.06) * 0.04, 2.5, d);
-      grp.current.rotation.x = THREE.MathUtils.damp(grp.current.rotation.x, -mouse.current.y * 0.05, 2.5, d);
+      grp.current.rotation.y = THREE.MathUtils.damp(grp.current.rotation.y, mouse.current.x * 0.12 + Math.sin(t * 0.06) * 0.04, 2.5, d);
+      grp.current.rotation.x = THREE.MathUtils.damp(grp.current.rotation.x, -mouse.current.y * 0.04, 2.5, d);
     }
-    const glow = (ref: React.RefObject<THREE.Group>, name: "King" | "Queen", mats: THREE.MeshStandardMaterial[]) => {
-      const g = ref.current;
-      if (!g) return;
-      g.position.y = Math.sin(t * 0.5 + (name === "King" ? 0 : 1)) * 0.04;
-      proj.current.set(0, 1.4, 0).applyMatrix4(g.matrixWorld).project(camera);
-      const dist = Math.hypot(proj.current.x - mouse.current.x, proj.current.y - mouse.current.y);
-      hov.current[name] = THREE.MathUtils.damp(hov.current[name], dist < 0.3 ? 1 - dist / 0.3 : 0, 6, d);
-      mats.forEach((mm) => (mm.emissiveIntensity = Math.max(mm.emissiveIntensity * 0, hov.current[name] * 0.8)));
-    };
-    glow(kRef, "King", built.king.mats);
-    glow(qRef, "Queen", built.queen.mats);
   });
 
   return (
     <group ref={grp} scale={2.4} position={[0, 0, 0]}>
-      <group ref={kRef} position={[-0.7, 0, 0.25]} rotation={[0, 0.32, 0]}>{built.king.o && <primitive object={built.king.o} />}</group>
-      <group ref={qRef} position={[0.74, 0, -0.35]} rotation={[0, -0.36, 0]}>{built.queen.o && <primitive object={built.queen.o} />}</group>
+      <InteractivePiece data={built.king} position={[-0.7, 0, 0.25]} rotationY={0.32} role="White · play-by-play" />
+      <InteractivePiece data={built.queen} position={[0.74, 0, -0.35]} rotationY={-0.36} role="Black · analysis" />
     </group>
   );
 }
@@ -355,7 +419,7 @@ export function WorldHero() {
         </h1>
         <Caption />
       </div>
-      <style>{`@keyframes whWave{from{transform:scaleY(0.3)}to{transform:scaleY(1)}}`}</style>
+      <style>{`@keyframes whWave{from{transform:scaleY(0.3)}to{transform:scaleY(1)}}@keyframes whSpeak{0%{opacity:0;transform:translateY(8px) scale(0.9)}20%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-16px)}}`}</style>
     </div>
   );
 }
