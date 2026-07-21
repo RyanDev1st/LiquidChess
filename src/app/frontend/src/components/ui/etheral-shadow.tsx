@@ -1,7 +1,6 @@
 'use client';
 
 import { useRef, useId, useEffect, CSSProperties } from 'react';
-import { animate, useMotionValue, AnimationPlaybackControls } from 'framer-motion';
 
 interface AnimationConfig {
   preview?: boolean;
@@ -25,7 +24,8 @@ interface ShadowOverlayProps {
 
 function mapRange(value: number, fromLow: number, fromHigh: number, toLow: number, toHigh: number): number {
   if (fromLow === fromHigh) return toLow;
-  return toLow + ((value - fromLow) / (fromHigh - fromLow)) * (toHigh - toLow);
+  const percentage = (value - fromLow) / (fromHigh - fromLow);
+  return toLow + percentage * (toHigh - toLow);
 }
 
 const useInstanceId = (): string => {
@@ -34,7 +34,8 @@ const useInstanceId = (): string => {
 };
 
 export function EtheralShadow({
-  color = 'rgba(201, 168, 76, 0.6)',
+  sizing = 'fill',
+  color = 'rgba(128, 128, 128, 1)',
   animation,
   noise,
   style,
@@ -42,90 +43,123 @@ export function EtheralShadow({
 }: ShadowOverlayProps) {
   const id = useInstanceId();
   const animationEnabled = !!(animation && animation.scale > 0);
-  const feRef = useRef<SVGFEColorMatrixElement>(null);
-  const mvHue = useMotionValue(0);
-  const animCtrl = useRef<AnimationPlaybackControls | null>(null);
+  const feColorMatrixRef = useRef<SVGFEColorMatrixElement>(null);
+  const turbulenceRef = useRef<SVGFETurbulenceElement>(null);
+  const displacementRef = useRef<SVGFEDisplacementMapElement>(null);
+  const displacementRef2 = useRef<SVGFEDisplacementMapElement>(null);
 
-  const dispScale = animation ? mapRange(animation.scale, 1, 100, 20, 100) : 0;
-  const duration = animation ? mapRange(animation.speed, 1, 100, 1000, 50) / 25 : 40;
-  const bfX = animation ? mapRange(animation.scale, 0, 100, 0.001, 0.0005) : 0.001;
-  const bfY = animation ? mapRange(animation.scale, 0, 100, 0.004, 0.002) : 0.004;
+  const displacementScale = animation ? mapRange(animation.scale, 1, 100, 20, 100) : 0;
 
   useEffect(() => {
-    if (!animationEnabled) return;
-    animCtrl.current?.stop();
-    mvHue.set(0);
-    animCtrl.current = animate(mvHue, 360, {
-      duration,
-      repeat: Infinity,
-      repeatType: 'loop',
-      ease: 'linear',
-      onUpdate: (v) => feRef.current?.setAttribute('values', String(v)),
-    });
-    return () => animCtrl.current?.stop();
-  }, [animationEnabled, duration, mvHue]);
+    if (!animationEnabled || !animation) return;
+
+    let frame = 0;
+    let lastUpdate = 0;
+    const startedAt = performance.now();
+    const lowPower = navigator.hardwareConcurrency <= 4 || window.devicePixelRatio > 1.5;
+    const frameInterval = lowPower ? 90 : 50;
+    const speed = mapRange(animation.speed, 1, 100, 0.12, 0.72);
+    const baseX = mapRange(animation.scale, 0, 100, 0.001, 0.0005);
+    const baseY = mapRange(animation.scale, 0, 100, 0.004, 0.002);
+
+    const tick = (now: number) => {
+      if (document.hidden) {
+        frame = requestAnimationFrame(tick);
+        return;
+      }
+
+      if (now - lastUpdate < frameInterval) {
+        frame = requestAnimationFrame(tick);
+        return;
+      }
+      lastUpdate = now;
+
+      const t = ((now - startedAt) / 1000) * speed;
+      const wave = Math.sin(t * Math.PI * 2);
+      const slowWave = Math.sin(t * Math.PI);
+      const x = Math.max(0.0001, baseX + wave * 0.0001);
+      const y = Math.max(0.0003, baseY + slowWave * 0.00046);
+      const scale = displacementScale * (0.62 + (slowWave + 1) * 0.16);
+
+      turbulenceRef.current?.setAttribute("baseFrequency", `${x},${y}`);
+      displacementRef.current?.setAttribute("scale", String(scale * 0.75));
+      displacementRef2.current?.setAttribute("scale", String(scale));
+      feColorMatrixRef.current?.setAttribute("values", String((t * 48) % 360));
+      frame = requestAnimationFrame(tick);
+    };
+
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [animation?.scale, animation?.speed, animationEnabled, displacementScale]);
 
   return (
     <div
       className={className}
-      style={{ overflow: 'hidden', position: 'relative', width: '100%', height: '100%', ...style }}
+      style={{
+        overflow: 'hidden',
+        position: 'absolute',
+        inset: 0,
+        width: '100%',
+        height: '100%',
+        ...style,
+      }}
     >
-      {/* SVG filter definition — zero-size, just a defs container */}
-      {animationEnabled && (
-        <svg
-          aria-hidden="true"
-          style={{ position: 'absolute', width: 0, height: 0, overflow: 'hidden' }}
-        >
-          <defs>
-            <filter id={id} x="-50%" y="-50%" width="200%" height="200%">
-              <feTurbulence
-                result="undulation"
-                numOctaves={2}
-                baseFrequency={`${bfX},${bfY}`}
-                seed={0}
-                type="turbulence"
-              />
-              {/* hueRotate animation drives the morphing */}
-              <feColorMatrix ref={feRef} in="undulation" type="hueRotate" values="0" />
-              {/* forward-ref to "dist" falls back to previous primitive per SVG spec */}
-              <feColorMatrix
-                in="dist"
-                result="circulation"
-                type="matrix"
-                values="4 0 0 0 1  4 0 0 0 1  4 0 0 0 1  1 0 0 0 0"
-              />
-              <feDisplacementMap
-                in="SourceGraphic"
-                in2="circulation"
-                scale={dispScale}
-                result="dist"
-              />
-              <feDisplacementMap
-                in="dist"
-                in2="undulation"
-                scale={dispScale}
-                result="output"
-              />
-            </filter>
-          </defs>
-        </svg>
-      )}
-
-      {/* Blob layer — expands beyond bounds so displacement has source pixels to pull */}
       <div
         style={{
           position: 'absolute',
-          inset: animationEnabled ? -dispScale : 0,
+          inset: -displacementScale,
           filter: animationEnabled ? `url(#${id}) blur(4px)` : 'none',
         }}
       >
+        {animationEnabled && (
+          <svg style={{ position: 'absolute' }}>
+            <defs>
+              <filter id={id}>
+                <feTurbulence
+                  ref={turbulenceRef}
+                  result="undulation"
+                  numOctaves={1}
+                  baseFrequency={`${mapRange(animation!.scale, 0, 100, 0.001, 0.0005)},${mapRange(animation!.scale, 0, 100, 0.004, 0.002)}`}
+                  seed={0}
+                  type="turbulence"
+                />
+                <feColorMatrix
+                  ref={feColorMatrixRef}
+                  in="undulation"
+                  type="hueRotate"
+                  values="180"
+                />
+                <feColorMatrix
+                  in="dist"
+                  result="circulation"
+                  type="matrix"
+                  values="4 0 0 0 1  4 0 0 0 1  4 0 0 0 1  1 0 0 0 0"
+                />
+                <feDisplacementMap
+                  ref={displacementRef}
+                  in="SourceGraphic"
+                  in2="circulation"
+                  scale={displacementScale}
+                  result="dist"
+                />
+                <feDisplacementMap
+                  ref={displacementRef2}
+                  in="dist"
+                  in2="undulation"
+                  scale={displacementScale}
+                  result="output"
+                />
+              </filter>
+            </defs>
+          </svg>
+        )}
         <div
           style={{
-            background: color,
-            WebkitMaskImage:
-              'radial-gradient(ellipse 65% 60% at 50% 50%, black 0%, black 40%, transparent 70%)',
-            maskImage:
-              'radial-gradient(ellipse 65% 60% at 50% 50%, black 0%, black 40%, transparent 70%)',
+            backgroundColor: color,
+            maskImage: `url('https://framerusercontent.com/images/ceBGguIpUU8luwByxuQz79t7To.png')`,
+            maskSize: sizing === 'stretch' ? '100% 100%' : 'cover',
+            maskRepeat: 'no-repeat',
+            maskPosition: 'center',
             width: '100%',
             height: '100%',
           }}
@@ -138,9 +172,9 @@ export function EtheralShadow({
             position: 'absolute',
             inset: 0,
             backgroundImage: `url("https://framerusercontent.com/images/g0QcWrxr87K0ufOxIUFBakwYA8.png")`,
-            backgroundSize: noise.scale * 200,
+            backgroundSize: noise.scale * 160,
             backgroundRepeat: 'repeat',
-            opacity: noise.opacity / 2,
+            opacity: noise.opacity / 3,
             pointerEvents: 'none',
           }}
         />

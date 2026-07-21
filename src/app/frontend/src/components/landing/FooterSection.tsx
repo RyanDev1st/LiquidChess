@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { FlickeringGrid } from "@/components/ui/flickering-grid";
 import { HoverPeek } from "@/components/ui/link-preview";
@@ -49,6 +49,19 @@ export function FooterSection() {
   const year = new Date().getFullYear();
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [gridFontSize, setGridFontSize] = useState(112);
+
+  useEffect(() => {
+    const updateSize = () => {
+      if (window.innerWidth < 640) setGridFontSize(44);
+      else if (window.innerWidth < 1024) setGridFontSize(72);
+      else setGridFontSize(112);
+    };
+
+    updateSize();
+    window.addEventListener("resize", updateSize);
+    return () => window.removeEventListener("resize", updateSize);
+  }, []);
 
   function handleSubscribe(e: React.FormEvent) {
     e.preventDefault();
@@ -59,7 +72,7 @@ export function FooterSection() {
     <div id="footer" className="snap-section relative flex flex-col bg-[#070707] overflow-hidden">
 
       {/* ── Top block: nav rows (left) + subscribe (right) ── */}
-      <div className="flex-1 flex gap-0 min-h-0 pt-12 pb-6 px-8 md:px-16 border-t border-white/6">
+      <div className="flex-1 flex flex-col gap-6 min-h-0 pt-10 pb-4 px-6 md:flex-row md:gap-0 md:px-14 border-t border-white/6">
 
         {/* Nav rows — CodePen-style label + links on same horizontal line */}
         <div className="flex-1 flex flex-col justify-center space-y-5 max-w-3xl">
@@ -73,7 +86,7 @@ export function FooterSection() {
               className="flex flex-wrap items-baseline gap-x-6 gap-y-2"
             >
               <span
-                className="font-bold text-base md:text-lg tracking-tight min-w-[120px]"
+                className="font-bold text-lg md:text-xl tracking-tight min-w-[136px]"
                 style={{
                   background: "linear-gradient(135deg,#c9a84c,#e4c87a)",
                   WebkitBackgroundClip: "text",
@@ -86,7 +99,7 @@ export function FooterSection() {
                 <HoverPeek key={link.title} url={link.href}>
                   <a
                     href={link.href}
-                    className="text-white/40 hover:text-white/90 text-sm transition-colors duration-200"
+                    className="text-white/40 hover:text-white/90 text-xs md:text-sm transition-colors duration-200"
                   >
                     {link.title}
                   </a>
@@ -152,16 +165,16 @@ export function FooterSection() {
       <div className="h-px bg-white/6 mx-0 flex-shrink-0" />
 
       {/* ── Elevate YOUR Experience — FlickeringGrid banner ── */}
-      <div className="relative flex-shrink-0 overflow-hidden" style={{ height: "200px" }}>
+      <div className="relative flex-shrink-0 overflow-hidden" style={{ height: "clamp(180px, 24svh, 250px)" }}>
         <div className="absolute inset-0 bg-gradient-to-t from-[#070707] via-transparent to-transparent z-10 pointer-events-none" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#070707] via-transparent to-[#070707] z-10 pointer-events-none" />
         <FlickeringGrid
           text="Elevate YOUR Experience"
-          fontSize={120}
+          fontSize={gridFontSize}
           fontWeight={700}
           color="#c9a84c"
           flickerChance={0.1}
-          maxOpacity={0.2}
+          maxOpacity={0.28}
           className="absolute inset-0"
         />
       </div>

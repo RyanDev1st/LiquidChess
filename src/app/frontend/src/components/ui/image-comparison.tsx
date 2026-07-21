@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { useState, createContext, useContext } from "react";
+import { useEffect, useState, createContext, useContext } from "react";
 import {
   motion,
   MotionValue,
@@ -25,15 +25,24 @@ export type ImageComparisonProps = {
   className?: string;
   enableHover?: boolean;
   springOptions?: SpringOptions;
+  value?: number;
+  defaultPosition?: number;
 };
 
 const DEFAULT_SPRING_OPTIONS = { bounce: 0, duration: 0 };
 
-function ImageComparison({ children, className, enableHover, springOptions }: ImageComparisonProps) {
+function ImageComparison({ children, className, enableHover, springOptions, value, defaultPosition = 50 }: ImageComparisonProps) {
   const [isDragging, setIsDragging] = useState(false);
-  const motionValue = useMotionValue(50);
+  const motionValue = useMotionValue(defaultPosition);
   const motionSliderPosition = useSpring(motionValue, springOptions ?? DEFAULT_SPRING_OPTIONS);
-  const [sliderPosition, setSliderPosition] = useState(50);
+  const [sliderPosition, setSliderPosition] = useState(defaultPosition);
+
+  useEffect(() => {
+    if (typeof value !== "number") return;
+    const percentage = Math.min(Math.max(value, 0), 100);
+    motionValue.set(percentage);
+    setSliderPosition(percentage);
+  }, [motionValue, value]);
 
   const handleDrag = (event: React.MouseEvent | React.TouchEvent) => {
     if (!isDragging && !enableHover) return;

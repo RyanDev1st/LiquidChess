@@ -196,17 +196,24 @@ Review:
 
 ## Layout
 
-Place the video and live chat inside the scrollable card.
+Layout
 
-Below the demo card, add the keyboard from:
+Place a 16:9 video player inside the scrollable card above, filling the card.
 
-`src\design\desktop-web\components\keyboard`
+Add a small live chat pop-up attached to the bottom-right of the video, overlapping it slightly and with visual depth. The chat should accept typed messages and display reactions.
 
-Use it directly under the card, not beside it.
+The keyboard component (src\design\desktop-web\components\keyboard) should sit directly below the card (not inside the scrollable container), offset slightly to the left and visually connected to the video by a wire.
 
-Add a wire connecting the keyboard to the video frame. The wire should resemble a power cable and communicate that the keyboard controls the video and chat.
+The keyboard appears only when the container flattens and the video is fully visible. The chat remains visible at all times and should clearly respond to keyboard interactions.
 
-## Functionality
+Use a transparent spline canvas so the keyboard and wire are visible. The wire should resemble a power cable and clearly connect the keyboard to the video frame. Pan the canvas so the wire fills the space between the video and the keyboard. (Keyboard reference: ![alt text](image.png))
+
+Pressing the keyboard's "Start" button or the "Control" button should toggle mute/unmute for the commentator AI and affect chat activity as described below.
+
+The chat must allow typing and show simulated reactions from others: lively emoji/text reactions when AI is unmuted and minimal/boring reactions when muted.
+
+
+## Functionality (Read-to-know only for now)
 
 - The video should loop.
 - It should start with only the video sound enabled.
@@ -215,17 +222,10 @@ Add a wire connecting the keyboard to the video frame. The wire should resemble 
 
 ### Keyboard interaction
 
-When the user clicks the keyboard button:
+When the keyboard button is clicked:
 
-- unmute the commentator AI
-- make the live chat more active and reactive
-- create a more lively viewing experience
-
-When clicked again:
-
-- mute the commentator AI
-- reduce the chat activity
-- return to a boring viewing experience
+- Unmute the commentator AI and increase chat activity/reactions.
+- Click again to mute the commentator AI and reduce chat activity.
 
 ## Comparison slider
 
@@ -236,10 +236,15 @@ Add the comparison slider from:
 Place it inside the video frame to show the difference between the muted and unmuted states.
 
 Requirements:
-
+- the slider appears only when the user clicks the keyboard button to unmute or mute the commentator AI then disappear when the animation is done.
 - it should visually compare both states side by side
 - the effect should be clear
 - it should not be clickable
 - it should act as a visual layer only
 - it should snap left and right in sync with the keyboard interaction
 - it should highlight the impact of the keyboard on the video and live chat
+
+Requirements:
+- The slider appears only during the mute/unmute animation triggered by the keyboard and hides when the animation finishes.
+- It visually compares muted vs. unmuted states side-by-side as a non-interactive overlay.
+- It should snap left/right in sync with the keyboard interaction and clearly highlight the keyboard's effect on the video and chat.

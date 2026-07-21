@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { EtheralShadow } from "@/components/ui/etheral-shadow";
 
@@ -43,7 +43,7 @@ type Phase = "typing" | "pause" | "executing" | "output" | "flash";
 export function HookSection({ onComplete }: HookSectionProps) {
   const [typedLines, setTypedLines] = useState<string[]>([]);
   const [activeLine, setActiveLine] = useState(0);
-  const [activeChars, setActiveChars] = useState(0);
+  const [, setActiveChars] = useState(0);
   const [phase, setPhase] = useState<Phase>("typing");
   const [execText, setExecText] = useState("");
   const [execDots, setExecDots] = useState(0);
@@ -117,7 +117,7 @@ export function HookSection({ onComplete }: HookSectionProps) {
       setActiveLine(CODE_LINES.length); // cursor off main code
     }, allDone + 1800);
 
-    EXEC_CMD.split("").forEach((ch, i) => {
+    EXEC_CMD.split("").forEach((_ch, i) => {
       addTimer(() => setExecText(EXEC_CMD.slice(0, i + 1)), allDone + 1800 + 300 + i * 55);
     });
 
@@ -147,17 +147,14 @@ export function HookSection({ onComplete }: HookSectionProps) {
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const cursorVisible = phase === "typing" || phase === "pause";
-  const isLastCodeLine = activeLine < CODE_LINES.length;
-
   return (
     <div className="relative w-full h-screen flex items-center justify-center overflow-hidden bg-[#070707]">
       {/* Etheral bg */}
       <div className="absolute inset-0">
         <EtheralShadow
-          color="rgba(201, 168, 76, 0.35)"
-          animation={{ scale: 60, speed: 30 }}
-          noise={{ opacity: 0.4, scale: 1.5 }}
+          color="rgba(201, 168, 76, 0.72)"
+          animation={{ scale: 64, speed: 38 }}
+          noise={{ opacity: 0.45, scale: 0.9 }}
           sizing="fill"
         />
       </div>

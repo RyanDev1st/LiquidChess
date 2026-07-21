@@ -2,6 +2,23 @@
 
 import { useState } from "react";
 
+function playSelectionSound() {
+  try {
+    const ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(1400, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.1);
+    gain.gain.setValueAtTime(0.05, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.12);
+  } catch (_) { /* silent fail */ }
+}
+
 interface VoiceCard {
   id: string | number;
   image: string;
@@ -38,11 +55,11 @@ const ExpandOnHover = ({ voices = defaultVoices }: ExpandOnHoverProps) => {
               key={card.id}
               className="relative cursor-pointer overflow-hidden rounded-2xl transition-all duration-500 ease-in-out"
               style={{
-                width: isExpanded ? "22rem" : "4.5rem",
-                height: "22rem",
+                width: isExpanded ? "28rem" : "4.5rem",
+                height: "28rem",
                 flexShrink: 0,
               }}
-              onMouseEnter={() => setExpandedId(card.id)}
+              onMouseEnter={() => { setExpandedId(card.id); playSelectionSound(); }}
             >
               <img
                 className="w-full h-full object-cover"

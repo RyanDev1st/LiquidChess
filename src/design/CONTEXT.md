@@ -8,4 +8,5 @@ Use these rules for design tasks:
 2. Keep on-screen copy concise unless the user asks for long-form text.
 3. Include `design/components/footer` and `design/components/menu-bar` on every page.
 4. Use `design/components/tool-tip` for descriptive helper text.
+5. Components from 21stdev or spline take absolute priority over your own custom designs.
 

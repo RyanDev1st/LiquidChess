@@ -9,13 +9,13 @@ export function VoiceShowcaseSection() {
       <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-[#070707] to-transparent z-10 pointer-events-none" />
 
       {/* Trusted sub-block */}
-      <div className="relative z-10 pt-16 pb-8 px-6">
+      <div className="relative z-10 pt-6 pb-3 px-6">
         <motion.p
           initial={{ opacity: 0, y: 8 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.4 }}
-          className="text-center text-xs font-mono uppercase tracking-[0.3em] text-[--gold] mb-4"
+          className="text-center text-xs font-mono uppercase tracking-[0.3em] text-[--gold] mb-2"
         >
           Built for the community
         </motion.p>
@@ -24,7 +24,7 @@ export function VoiceShowcaseSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.05 }}
-          className="text-center text-4xl md:text-6xl font-semibold tracking-tight text-white mb-2"
+          className="text-center text-2xl md:text-3xl font-semibold tracking-tight text-white mb-1"
         >
           Trusted by the{" "}
           <span
@@ -43,7 +43,7 @@ export function VoiceShowcaseSection() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.4, delay: 0.1 }}
-          className="text-center text-white/35 text-sm mb-10"
+          className="text-center text-white/35 text-xs mb-4"
         >
           Leagues, streamers, creators worldwide
         </motion.p>
@@ -59,7 +59,7 @@ export function VoiceShowcaseSection() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="text-xs font-mono uppercase tracking-[0.35em] text-[--gold]/80 mb-6"
+          className="text-xs font-mono uppercase tracking-[0.35em] text-[--gold]/80 mb-3"
         >
           Choose your voice
         </motion.p>
@@ -68,9 +68,19 @@ export function VoiceShowcaseSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.4, delay: 0.05 }}
-          className="text-center text-xl md:text-2xl font-light text-white/70 tracking-wide mb-8"
+          className="text-center text-3xl md:text-5xl font-bold text-white tracking-wide mb-6"
         >
-          Your game. Their voice.
+          Your game.{" "}
+          <span
+            className="font-serif italic font-normal"
+            style={{
+              background: "linear-gradient(135deg, #c9a84c, #e4c87a)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+            }}
+          >
+            Their voice.
+          </span>
         </motion.h3>
         <ExpandOnHover />
       </div>

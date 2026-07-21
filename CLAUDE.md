@@ -21,7 +21,9 @@ Claude-facing compatibility shim. Route to the canonical layer, not this file.
 
 Name the files accordingly with the main ideas. The top of the page has to have a short summary and the timestamp of the last update.
 
-8. At the end of each phase, git commit with a concise message describing the change, and push to the remote repository `https://github.com/RyanDev1st/LiquidChess`
+8. At the end of each phase, git commit with a concise message describing the changes made. 
+
+DO NOT PUSH!
 
 ## Project Schema
 

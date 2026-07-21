@@ -46,9 +46,9 @@ export function Marquee({
                   'flex shrink-0 justify-around',
                   !vertical && 'animate-marquee flex-row',
                   vertical && 'animate-marquee-vertical flex-col',
-                  pauseOnHover && 'group-hover:[animation-play-state:paused]',
-                  reverse && '[animation-direction:reverse]'
+                  pauseOnHover && 'group-hover:[animation-play-state:paused]'
                 )}
+                style={{ animationDirection: reverse ? 'reverse' : 'normal' } as React.CSSProperties}
               >
                 {children}
               </div>

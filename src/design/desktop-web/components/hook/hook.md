@@ -17,6 +17,26 @@ If it doesn't, provide instructions on how to setup project via shadcn CLI, inst
 Determine the default path for components and styles. 
 If default path for components is not /components/ui, provide instructions on why it's important to create this folder
 Copy-paste this component to /components/ui folder:
+
+```tsx
+demo.tsx
+import { Component } from "@/components/ui/etheral-shadow";
+
+const DemoOne = () => {
+  return (
+    <div className="flex w-full h-screen justify-center items-center">
+      <Component
+      color="rgba(128, 128, 128, 1)"
+        animation={{ scale: 100, speed: 90 }}
+        noise={{ opacity: 1, scale: 1.2 }}
+        sizing="fill"
+         />
+    </div>
+  );
+};
+
+export { DemoOne };```
+
 ```tsx
 etheral-shadow.tsx
 'use client';

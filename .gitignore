@@ -58,3 +58,16 @@ Thumbs.db
 .vscode/
 .idea/
 *.log
+# CocoIndex Code (ccc)
+/.cocoindex_code/
+
+# Build output: Vercel builds from source, a committed dist only goes stale
+src/app/frontend/dist/
+
+# Capture + experiment output
+.playwright-cli/
+src/app/frontend/output/
+src/app/frontend/*.png
+cocoindex.db
+cocoindex-quickstart/
+/data/

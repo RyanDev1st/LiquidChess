@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, Suspense } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { useFBX, Environment, PerspectiveCamera } from "@react-three/drei";
+import { useFBX, Environment } from "@react-three/drei";
 import * as THREE from "three";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -11,9 +11,8 @@ const PROMO_VIDEO = "/videos/promo.mp4"; // Placeholder path
 function CTAModel({ leftSide }: { leftSide: boolean }) {
   const fbx = useFBX("/models/chess-pieces.fbx");
   const groupRef = useRef<THREE.Group>(null);
-  const pieceRef = useRef<THREE.Group>(null);
+  const pieceRef = useRef<THREE.Object3D | null>(null);
   const timeRef = useRef(0);
-  const [frame, setFrame] = useState(0);
 
   useEffect(() => {
     if (!fbx || pieceRef.current) return;

@@ -85,13 +85,12 @@
   .snap-container {
     height: 100svh;
     overflow-y: scroll;
-    scroll-snap-type: y proximity;
-    scroll-behavior: smooth;
+    scroll-behavior: auto;
+    overflow-anchor: none;
   }
 
   .snap-section {
     height: 100svh;
-    scroll-snap-align: start;
     position: relative;
     overflow: hidden;
   }
@@ -260,10 +259,49 @@
   animation: marquee-vertical var(--duration) linear infinite;
 }
 
+/* ── Ethereal blob background ── */
+.ethereal-blob {
+  position: absolute;
+  width: 60vw;
+  height: 60vw;
+  border-radius: 50%;
+  filter: blur(80px);
+  will-change: transform, border-radius;
+  pointer-events: none;
+}
+.ethereal-blob-1 {
+  top: -10%; left: -10%;
+  animation: blob-morph-a 18s ease-in-out infinite;
+}
+.ethereal-blob-2 {
+  bottom: -15%; right: -10%;
+  animation: blob-morph-b 22s ease-in-out infinite;
+}
+.ethereal-blob-3 {
+  top: 30%; left: 30%;
+  animation: blob-morph-c 26s ease-in-out infinite;
+  opacity: 0.5;
+}
+
+@keyframes blob-morph-a {
+  0%,100% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; transform: translate(0,0) scale(1); }
+  33%     { border-radius: 60% 40% 30% 70% / 50% 60% 40% 60%; transform: translate(8%,5%) scale(1.1); }
+  66%     { border-radius: 30% 70% 50% 50% / 60% 40% 50% 50%; transform: translate(-5%,8%) scale(0.95); }
+}
+@keyframes blob-morph-b {
+  0%,100% { border-radius: 70% 30% 40% 60% / 60% 50% 40% 50%; transform: translate(0,0) scale(1); }
+  33%     { border-radius: 50% 50% 60% 40% / 40% 60% 50% 60%; transform: translate(-8%,-5%) scale(1.08); }
+  66%     { border-radius: 30% 70% 70% 30% / 50% 50% 60% 40%; transform: translate(5%,-8%) scale(0.92); }
+}
+@keyframes blob-morph-c {
+  0%,100% { border-radius: 50% 50% 50% 50%; transform: translate(0,0) scale(1); }
+  50%     { border-radius: 60% 40% 40% 60% / 50% 60% 40% 50%; transform: translate(-10%,10%) scale(1.15); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
-  .snap-container { scroll-snap-type: none; }
+  /* snap-container: no change needed, snap-type already removed */
 }
